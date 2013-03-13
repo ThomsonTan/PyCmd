@@ -552,6 +552,14 @@ def main():
                             # Don't append a space to end since it could be a foder end with '\',
                             # and completion could continue
                             suggest_item = suggestions[string.lowercase.index(rec.Char)]
+                            
+                            # if suggest_item has space inside
+                            if suggest_item.find(' ') != -1 and tokens[-1][0] != '"':
+                                tokens[-1] = '"' + tokens[-1]
+                            
+                            # append " if starts with it
+                            if tokens[-1][0] == '"' :
+                                suggest_item = suggest_item + '"'
                             if len (tokens[-1]) > 0 and tokens[-1][-1] == '\\' :
                                 # Complete for path, don't remove the previous one
                                 tokens[-1] = tokens[-1] + suggest_item
@@ -559,8 +567,11 @@ def main():
                                 # handle partial completion
                                 tokens[-1] = tokens[-1][:tokens[-1].rfind('\\') + 1] + suggest_item
                                 # append space at the end if not a path completion
-                                if not suggest_item.endswith('\\') :
+                                # if tokens[-1][0] is ", no need to add space to separete since 
+                                # " will be appended anyway.
+                                if not (suggest_item.endswith('\\') or suggest_item.endswith('\\"')):
                                     tokens[-1] = tokens[-1] + ' '
+
                             completed = ' '.join(tokens)
                         state.reset_prev_line()
 
