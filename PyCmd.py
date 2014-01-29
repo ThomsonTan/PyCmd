@@ -558,7 +558,7 @@ def main():
                                 tokens[-1] = '"' + tokens[-1]
                             
                             # append " if starts with it
-                            if tokens[-1][0] == '"' :
+                            if len(tokens[-1]) > 0 and tokens[-1][0] == '"' :
                                 suggest_item = suggest_item + '"'
                             if len (tokens[-1]) > 0 and tokens[-1][-1] == '\\' :
                                 # Complete for path, don't remove the previous one
