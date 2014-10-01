@@ -390,6 +390,10 @@ def main():
                     state.handle(ActionCode.ACTION_BACKSPACE_WORD)
                 elif rec.VirtualKeyCode == 191:
                     state.handle(ActionCode.ACTION_EXPAND)
+                elif rec.VirtualKeyCode == 75:          #Alt-K 
+                    state.handle(ActionCode.ACTION_PREV)
+                elif rec.VirtualKeyCode == 74:          #Alt-J
+                    state.handle(ActionCode.ACTION_NEXT)
             elif is_shift_pressed(rec) and rec.VirtualKeyCode == 33:    # Shift-PgUp
                 (_, t, _, b) = get_viewport()
                 scroll_buffer(t - b + 2)
