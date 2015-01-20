@@ -24,6 +24,7 @@ pycmd_install_dir = None
 state = None
 dir_hist = None
 tmpfile = None
+max_cmd_history_lines = 10000
 
 char2int = {'0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9}
 
@@ -292,7 +293,7 @@ def main():
                         state.handle(ActionCode.ACTION_ESCAPE)
                         save_history(state.history.list,
                                      pycmd_data_dir + '\\history',
-                                     1000)
+                                     max_cmd_history_lines)
                         auto_select = False
                 elif rec.VirtualKeyCode == 65:          # Ctrl-A
                     state.handle(ActionCode.ACTION_HOME, select)
@@ -430,7 +431,7 @@ def main():
                         state.handle(ActionCode.ACTION_ESCAPE)
                         save_history(state.history.list,
                                      pycmd_data_dir + '\\history',
-                                     1000)
+                                     max_cmd_history_lines)
                         auto_select = False
                 elif rec.Char == '\t':                  # Tab
                     stdout.write(state.after_cursor)        # Move cursor to the end
@@ -601,7 +602,7 @@ def main():
         state.history.add(line)
         save_history(state.history.list,
                      pycmd_data_dir + '\\history',
-                     1000)
+                     max_cmd_history_lines)
 
 
         # Add to dir history
