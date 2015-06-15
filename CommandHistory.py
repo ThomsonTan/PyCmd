@@ -80,7 +80,15 @@ class CommandHistory:
                 matches = re.search(pattern, line, re.IGNORECASE)
                 if matches:
                     self.filtered_list.insert(0, (line, [matches.span(i) for i in range(1, matches.lastindex + 1)]))
-                    #print '\n\n', self.filtered_list[-1], '\n\n'
+                    # print '\n\n', self.filtered_list[0], '\n\n'
+
+                    # optimization: limit the results added to filtered_list.
+                    # the filter list is traversed by keyup/keydown so more than tens in the list looks crazy
+                    # The high selective pattern should always be used when necessary.
+                    if len(self.filtered_list) >= 30 :
+                        break;
+            if len(self.filtered_list) >= 30 :
+                break;
 
         # We use the trail to navigate back in the same order
         # don't update self.trail if there is no match in filter
