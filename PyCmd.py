@@ -303,16 +303,16 @@ def main():
                     state.handle(ActionCode.ACTION_LEFT, select)
                 elif rec.VirtualKeyCode == 70:          # Ctrl-F
                     state.handle(ActionCode.ACTION_RIGHT, select)
-                elif rec.VirtualKeyCode == 80:          # Ctrl-P
-                    state.handle(ActionCode.ACTION_PREV)
-                elif rec.VirtualKeyCode == 78:          # Ctrl-N
-                    state.handle(ActionCode.ACTION_NEXT)
-                elif rec.VirtualKeyCode == 37:          # Ctrl-Left
-                    state.handle(ActionCode.ACTION_LEFT_WORD, select)
-                elif rec.VirtualKeyCode == 39:          # Ctrl-Right
-                    state.handle(ActionCode.ACTION_RIGHT_WORD, select)
-                elif rec.VirtualKeyCode == 46:          # Ctrl-Delete
-                    state.handle(ActionCode.ACTION_DELETE_WORD)
+                # elif rec.VirtualKeyCode == 80:          # Ctrl-P
+                #     state.handle(ActionCode.ACTION_PREV)
+                # elif rec.VirtualKeyCode == 78:          # Ctrl-N
+                #     state.handle(ActionCode.ACTION_NEXT)
+                # elif rec.VirtualKeyCode == 37:          # Ctrl-Left
+                #     state.handle(ActionCode.ACTION_LEFT_WORD, select)
+                # elif rec.VirtualKeyCode == 39:          # Ctrl-Right
+                #     state.handle(ActionCode.ACTION_RIGHT_WORD, select)
+                # elif rec.VirtualKeyCode == 46:          # Ctrl-Delete
+                #     state.handle(ActionCode.ACTION_DELETE_WORD)
                 elif rec.VirtualKeyCode == 67:          # Ctrl-C
                     # The Ctrl-C signal is caught by our custom handler, and a
                     # synthetic keyboard event is created so that we can catch
@@ -325,17 +325,17 @@ def main():
                 elif rec.VirtualKeyCode == 88:          # Ctrl-X
                     state.handle(ActionCode.ACTION_CUT)
                     auto_select = False
-                elif rec.VirtualKeyCode == 87:          # Ctrl-W
-                    state.handle(ActionCode.ACTION_CUT)
-                    auto_select = False
+                # elif rec.VirtualKeyCode == 87:          # Ctrl-W
+                #     state.handle(ActionCode.ACTION_CUT)
+                #     auto_select = False
                 elif rec.VirtualKeyCode == 86:          # Ctrl-V
                     state.handle(ActionCode.ACTION_PASTE)
                     auto_select = False
-                elif rec.VirtualKeyCode == 89:          # Ctrl-Y
-                    state.handle(ActionCode.ACTION_PASTE)
-                    auto_select = False
-                elif rec.VirtualKeyCode == 8:           # Ctrl-Backspace
-                    state.handle(ActionCode.ACTION_BACKSPACE_WORD)
+                # elif rec.VirtualKeyCode == 89:          # Ctrl-Y
+                #     state.handle(ActionCode.ACTION_PASTE)
+                #     auto_select = False
+                # elif rec.VirtualKeyCode == 8:           # Ctrl-Backspace
+                #     state.handle(ActionCode.ACTION_BACKSPACE_WORD)
                 elif rec.VirtualKeyCode == 90:  
                     if not is_shift_pressed(rec):       # Ctrl-Z
                         state.handle(ActionCode.ACTION_UNDO)
@@ -370,10 +370,10 @@ def main():
                     state.handle(ActionCode.ACTION_LEFT_WORD, select)
                 elif rec.VirtualKeyCode == 70:          # Alt-F
                     state.handle(ActionCode.ACTION_RIGHT_WORD, select)
-                elif rec.VirtualKeyCode == 80:          # Alt-P
-                    state.handle(ActionCode.ACTION_PREV)
-                elif rec.VirtualKeyCode == 78:          # Alt-N
-                    state.handle(ActionCode.ACTION_NEXT)
+                # elif rec.VirtualKeyCode == 80:          # Alt-P
+                #     state.handle(ActionCode.ACTION_PREV)
+                # elif rec.VirtualKeyCode == 78:          # Alt-N
+                #     state.handle(ActionCode.ACTION_NEXT)
                 elif rec.VirtualKeyCode == 68:          # Alt-D
                     if state.before_cursor + state.after_cursor == '':
                         dir_hist.display()
