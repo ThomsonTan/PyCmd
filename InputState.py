@@ -31,7 +31,6 @@ class ActionCode:
     ACTION_UNDO_EMACS = 22
     ACTION_EXPAND = 23
 
-
 class InputState:
     """
     Handles the current state of the input line:
@@ -96,7 +95,8 @@ class InputState:
             ActionCode.ACTION_UNDO: self.key_undo,
             ActionCode.ACTION_REDO: self.key_redo,
             ActionCode.ACTION_UNDO_EMACS: self.key_undo_emacs, 
-            ActionCode.ACTION_EXPAND: self.key_expand, }
+            ActionCode.ACTION_EXPAND: self.key_expand,
+            }
             
         # Action categories
         self.insert_actions = [ActionCode.ACTION_INSERT,
@@ -150,10 +150,16 @@ class InputState:
                or self.before_cursor != self.prev_before_cursor \
                or self.after_cursor != self.prev_after_cursor
 
-    def handle(self, action, arg = None):
+    def handle(self, action, arg = None, arg2 = None):
         """Handle a keyboard action"""
         handler = self.handlers[action]
-        if action in self.navigate_actions:
+        if arg2 != None \
+                and (action == ActionCode.ACTION_LEFT_WORD \
+                or action == ActionCode.ACTION_RIGHT_WORD):
+            handler(arg, arg2)
+        elif action in self.navigate_actions \
+                or action == ActionCode.ACTION_BACKSPACE_WORD \
+                or action == ActionCode.ACTION_DELETE_WORD:
             # Navigation actions have a "select" argument
             handler(arg)
         elif action in self.insert_actions:
@@ -230,50 +236,50 @@ class InputState:
         self.history.reset()
 
 
-    def key_left_word(self, select=False):
+    def key_left_word(self, select=False, sep=word_sep):
         """Move backward one word (Ctrl-Left)"""
         # Skip spaces
-        while self.before_cursor != '' and self.before_cursor[-1] in  word_sep:
+        while self.before_cursor != '' and self.before_cursor[-1] in  sep:
             self.key_left(select)
 
         # Jump over word
-        while self.before_cursor != '' and not self.before_cursor[-1] in word_sep:
+        while self.before_cursor != '' and not self.before_cursor[-1] in sep:
             self.key_left(select)
 
-    def key_right_word(self, select=False):
+    def key_right_word(self, select=False, sep=word_sep):
         """Move forward one word (Ctrl-Right)"""
         # Skip spaces
-        while self.after_cursor != '' and self.after_cursor[0] in word_sep:
+        while self.after_cursor != '' and self.after_cursor[0] in sep:
             self.key_right(select)
 
         # Jump over word
-        while self.after_cursor != '' and not self.after_cursor[0] in word_sep:
+        while self.after_cursor != '' and not self.after_cursor[0] in sep:
             self.key_right(select)
 
-    def key_backspace_word(self):
+    def key_backspace_word(self, sep=word_sep):
         """Delte backwards one word (Ctrl-Left), or delete selection"""
         if self.get_selection() != '':
             self.delete_selection()
         else:
             # Skip spaces
-            while self.before_cursor != '' and self.before_cursor[-1] in word_sep:
+            while self.before_cursor != '' and self.before_cursor[-1] in sep:
                 self.key_backspace()
 
             # Jump over word
-            while self.before_cursor != '' and not self.before_cursor[-1] in word_sep:
+            while self.before_cursor != '' and not self.before_cursor[-1] in sep:
                 self.key_backspace()
 
-    def key_del_word(self):
+    def key_del_word(self, sep=word_sep):
         """Delete forwards one word (Ctrl-Right), or delete selection"""
         if self.get_selection() != '':
             self.delete_selection()
         else:
             # Skip spaces
-            while self.after_cursor != '' and self.after_cursor[0] in word_sep:
+            while self.after_cursor != '' and self.after_cursor[0] in sep:
                 self.key_del()
 
             # Jump over word
-            while self.after_cursor != '' and not self.after_cursor[0] in word_sep:
+            while self.after_cursor != '' and not self.after_cursor[0] in sep:
                 self.key_del()
             
     def key_del(self):
@@ -457,11 +463,12 @@ class InputState:
             context_matches = []
             no_context_matches = []
             for line in reversed(self.history.list):
-                line_words = [''] + line.split(' ')
+                line_words = [''] + line.split(' ')  #TODO: handle "
                 for i in range(len(line_words) - 1, 0, -1):
                     word = line_words[i]
                     context = line_words[i - 1]
-                    if (word.lower().startswith(expand_stub.lower())
+                    #if (word.lower().startswith(expand_stub.lower())
+                    if ((word.lower().find(expand_stub.lower()) != -1)
                         and word.lower() != expand_stub.lower()): 
                         if context.lower() == expand_context.lower():
                             context_matches.append(word)
@@ -475,15 +482,14 @@ class InputState:
             self.expand_matches = [matches_set.setdefault(e, e) 
                                    for e in context_matches + no_context_matches
                                    if e not in matches_set] + [self.expand_stub]
-            self.expand_matches.reverse()
             # print '\n\n', self.expand_matches, '\n\n'
 
-        match = self.expand_matches[-1]
+        match = self.expand_matches[0]
         self.before_cursor = self.expand_line[:len(self.expand_line) 
                                                - len(self.expand_stub)] + match
         self.reset_selection()
         self.history.reset()
-        del self.expand_matches[-1]
+        del self.expand_matches[0]
 
     def reset_selection(self):
         """Reset text selection"""

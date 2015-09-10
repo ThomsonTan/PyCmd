@@ -295,7 +295,7 @@ def main():
                                      pycmd_data_dir + '\\history',
                                      max_cmd_history_lines)
                         auto_select = False
-                elif rec.VirtualKeyCode == 65:          # Ctrl-A
+                elif rec.VirtualKeyCode == 65:          # Ctrl-A, no easy typing remap to Alt-A
                     state.handle(ActionCode.ACTION_HOME, select)
                 elif rec.VirtualKeyCode == 69:          # Ctrl-E
                     state.handle(ActionCode.ACTION_END, select)
@@ -322,6 +322,10 @@ def main():
                     else:
                         state.handle(ActionCode.ACTION_ESCAPE)
                     auto_select = False
+                elif rec.VirtualKeyCode == 82:          # Ctrl-R
+                    state.handle(ActionCode.ACTION_LEFT_WORD, select, sep_chars)
+                elif rec.VirtualKeyCode == 84:          # Ctrl-T
+                    state.handle(ActionCode.ACTION_RIGHT_WORD, select, sep_chars)
                 elif rec.VirtualKeyCode == 88:          # Ctrl-X
                     state.handle(ActionCode.ACTION_CUT)
                     auto_select = False
@@ -366,6 +370,8 @@ def main():
                             state.handle(ActionCode.ACTION_LEFT_WORD, select)
                         elif rec.VirtualKeyCode == 39:          # Alt-Right
                             state.handle(ActionCode.ACTION_RIGHT_WORD, select)
+                elif rec.VirtualKeyCode == 65:          # Alt-A
+                    state.handle(ActionCode.ACTION_HOME)
                 elif rec.VirtualKeyCode == 66:          # Alt-B
                     state.handle(ActionCode.ACTION_LEFT_WORD, select)
                 elif rec.VirtualKeyCode == 70:          # Alt-F
@@ -381,6 +387,15 @@ def main():
                         stdout.write(state.prev_prompt)
                     else:
                         state.handle(ActionCode.ACTION_DELETE_WORD) 
+                elif rec.VirtualKeyCode == 82:          # Alt-R
+                    state.handle(ActionCode.ACTION_BACKSPACE_WORD, sep_chars)
+                elif rec.VirtualKeyCode == 84:          # Alt-T
+                    state.handle(ActionCode.ACTION_DELETE_WORD, sep_chars)
+                elif rec.VirtualKeyCode == 85:          # Alt-U
+                    if not is_shift_pressed(rec):
+                        state.handle(ActionCode.ACTION_UNDO)
+                    else:
+                        state.handle(ActionCode.ACTION_REDO) #Alt-Shift-U
                 elif rec.VirtualKeyCode == 87:          # Alt-W
                     state.handle(ActionCode.ACTION_COPY)
                     state.reset_selection()
@@ -388,8 +403,8 @@ def main():
                 elif rec.VirtualKeyCode == 46:          # Alt-Delete
                     state.handle(ActionCode.ACTION_DELETE_WORD)
                 elif rec.VirtualKeyCode == 8:           # Alt-Backspace
-                    state.handle(ActionCode.ACTION_BACKSPACE_WORD)        # Alt-/
-                elif rec.VirtualKeyCode == 191:
+                    state.handle(ActionCode.ACTION_BACKSPACE_WORD)
+                elif rec.VirtualKeyCode == 191:         # Alt-/
                     state.handle(ActionCode.ACTION_EXPAND)
                 elif rec.VirtualKeyCode == 75:          # Alt-K 
                     state.handle(ActionCode.ACTION_PREV)
