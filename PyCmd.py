@@ -300,8 +300,12 @@ def main():
                 elif rec.VirtualKeyCode == 69:          # Ctrl-E
                     state.handle(ActionCode.ACTION_END, select)
                 elif rec.VirtualKeyCode == 66:          # Ctrl-B
-                    state.handle(ActionCode.ACTION_LEFT, select)
+                    state.handle(ActionCode.ACTION_LEFT_WORD, select)
                 elif rec.VirtualKeyCode == 70:          # Ctrl-F
+                    state.handle(ActionCode.ACTION_RIGHT_WORD, select)
+                elif rec.VirtualKeyCode == 72:          # Ctrl-H
+                    state.handle(ActionCode.ACTION_LEFT, select)
+                elif rec.VirtualKeyCode == 76:          # Ctrl-L
                     state.handle(ActionCode.ACTION_RIGHT, select)
                 # elif rec.VirtualKeyCode == 80:          # Ctrl-P
                 #     state.handle(ActionCode.ACTION_PREV)
@@ -373,9 +377,9 @@ def main():
                 elif rec.VirtualKeyCode == 65:          # Alt-A
                     state.handle(ActionCode.ACTION_HOME)
                 elif rec.VirtualKeyCode == 66:          # Alt-B
-                    state.handle(ActionCode.ACTION_LEFT_WORD, select)
+                    state.handle(ActionCode.ACTION_BACKSPACE_WORD, select)
                 elif rec.VirtualKeyCode == 70:          # Alt-F
-                    state.handle(ActionCode.ACTION_RIGHT_WORD, select)
+                    state.handle(ActionCode.ACTION_DELETE_WORD, select)
                 # elif rec.VirtualKeyCode == 80:          # Alt-P
                 #     state.handle(ActionCode.ACTION_PREV)
                 # elif rec.VirtualKeyCode == 78:          # Alt-N

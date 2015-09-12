@@ -157,9 +157,10 @@ class InputState:
                 and (action == ActionCode.ACTION_LEFT_WORD \
                 or action == ActionCode.ACTION_RIGHT_WORD):
             handler(arg, arg2)
-        elif action in self.navigate_actions \
-                or action == ActionCode.ACTION_BACKSPACE_WORD \
-                or action == ActionCode.ACTION_DELETE_WORD:
+        elif arg != None \
+                and (action in self.navigate_actions \
+                    or action == ActionCode.ACTION_BACKSPACE_WORD \
+                    or action == ActionCode.ACTION_DELETE_WORD) :
             # Navigation actions have a "select" argument
             handler(arg)
         elif action in self.insert_actions:
