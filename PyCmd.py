@@ -377,9 +377,9 @@ def main():
                 elif rec.VirtualKeyCode == 65:          # Alt-A
                     state.handle(ActionCode.ACTION_HOME)
                 elif rec.VirtualKeyCode == 66:          # Alt-B
-                    state.handle(ActionCode.ACTION_BACKSPACE_WORD, select)
+                    state.handle(ActionCode.ACTION_BACKSPACE_WORD)
                 elif rec.VirtualKeyCode == 70:          # Alt-F
-                    state.handle(ActionCode.ACTION_DELETE_WORD, select)
+                    state.handle(ActionCode.ACTION_DELETE_WORD)
                 # elif rec.VirtualKeyCode == 80:          # Alt-P
                 #     state.handle(ActionCode.ACTION_PREV)
                 # elif rec.VirtualKeyCode == 78:          # Alt-N
