@@ -305,6 +305,7 @@ def main():
                     state.handle(ActionCode.ACTION_RIGHT_WORD, select)
                 elif rec.VirtualKeyCode == 72:          # Ctrl-H
                     state.handle(ActionCode.ACTION_LEFT, select)
+                # Ctrl-J and Ctrl-K are unavailable for remapping in cmd.exe?
                 elif rec.VirtualKeyCode == 76:          # Ctrl-L
                     state.handle(ActionCode.ACTION_RIGHT, select)
                 # elif rec.VirtualKeyCode == 80:          # Ctrl-P
