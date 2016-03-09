@@ -1,6 +1,7 @@
 from CommandHistory import CommandHistory
 from common import fuzzy_match, word_sep
 import win32clipboard as wclip
+import os
 
 class ActionCode:
     """
@@ -30,6 +31,7 @@ class ActionCode:
     ACTION_REDO = 21
     ACTION_UNDO_EMACS = 22
     ACTION_EXPAND = 23
+    ACTION_OPEN_CLIPBOARD = 24
 
 class InputState:
     """
@@ -70,6 +72,8 @@ class InputState:
         self.undo_emacs_index = -1
         self.last_action = ActionCode.ACTION_none
 
+        self.open_app = os.path.expandvars("%PYCMD_OPEN_APP%")
+
         # Action handlers
         self.handlers = {
             ActionCode.ACTION_none: None,
@@ -82,6 +86,7 @@ class InputState:
             ActionCode.ACTION_COPY: self.key_copy,
             ActionCode.ACTION_CUT: self.key_cut,
             ActionCode.ACTION_PASTE: self.key_paste,
+            ActionCode.ACTION_OPEN_CLIPBOARD: self.open_clip_board,
             ActionCode.ACTION_PREV: self.key_up,
             ActionCode.ACTION_NEXT: self.key_down,
             ActionCode.ACTION_INSERT: self.key_insert,
@@ -397,6 +402,22 @@ class InputState:
             self.reset_selection()
         wclip.CloseClipboard()
         self.history.reset()
+
+    def open_clip_board(self):
+        """Pass clipboard content to %PYCMD_OPEN_APP%"""
+        if len(self.open_app) == 0:
+            return
+
+        wclip.OpenClipboard()
+        if wclip.IsClipboardFormatAvailable(wclip.CF_TEXT):
+            text = wclip.GetClipboardData()
+
+            #Purge garbage chars that some apps put in the clipboard
+            if text.find('\0') >= 0:
+                text = text[:text.find('\0')]
+
+            os.system("cmd.exe /c" + self.open_app + " " + text)
+        wclip.CloseClipboard()
 
     def key_insert(self, text):
         """Insert text at the current cursor position"""

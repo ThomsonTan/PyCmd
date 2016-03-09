@@ -379,6 +379,9 @@ def main():
                     state.handle(ActionCode.ACTION_HOME)
                 elif rec.VirtualKeyCode == 66:          # Alt-B
                     state.handle(ActionCode.ACTION_BACKSPACE_WORD)
+                elif rec.VirtualKeyCode == 69:          # Alt-E
+                    force_repaint = False
+                    state.handle(ActionCode.ACTION_OPEN_CLIPBOARD)
                 elif rec.VirtualKeyCode == 70:          # Alt-F
                     state.handle(ActionCode.ACTION_DELETE_WORD)
                 # elif rec.VirtualKeyCode == 80:          # Alt-P
