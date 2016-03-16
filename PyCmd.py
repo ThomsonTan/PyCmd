@@ -352,12 +352,12 @@ def main():
                         state.handle(ActionCode.ACTION_REDO)
                     auto_select = False
             elif is_alt_pressed(rec) and not is_ctrl_pressed(rec):      # Alt-Something
-                if rec.VirtualKeyCode in [37, 39] + range(49, 59):      # Dir history 
+                if rec.VirtualKeyCode in [37, 39, 72, 76] + range(49, 59): # Dir history 
                     if state.before_cursor + state.after_cursor == '':
                         state.reset_prev_line()
-                        if rec.VirtualKeyCode == 37:            # Alt-Left
+                        if rec.VirtualKeyCode == 37 or rec.VirtualKeyCode == 72: # Alt-Left or Alt-H
                             changed = dir_hist.go_left()
-                        elif rec.VirtualKeyCode == 39:          # Alt-Right     
+                        elif rec.VirtualKeyCode == 39 or rec.VirtualKeyCode == 76: # Alt-Right or Alt-L
                             changed = dir_hist.go_right()
                         else:                                   # Alt-1..Alt-9        
                             changed = dir_hist.jump(rec.VirtualKeyCode - 48)
