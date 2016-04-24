@@ -287,14 +287,16 @@ def main():
                     auto_select = True
                     state.reset_selection()
                 elif rec.VirtualKeyCode == 71:          # Ctrl-G
-                    if scrolling:
-                        scrolling = False
-                    else:
-                        state.handle(ActionCode.ACTION_ESCAPE)
-                        save_history(state.history.list,
-                                     pycmd_data_dir + '\\history',
-                                     max_cmd_history_lines)
-                        auto_select = False
+                    state.history.reset()
+                    break
+                    # if scrolling:
+                    #     scrolling = False
+                    # else:
+                    #     state.handle(ActionCode.ACTION_ESCAPE)
+                    #     save_history(state.history.list,
+                    #                  pycmd_data_dir + '\\history',
+                    #                  max_cmd_history_lines)
+                    #     auto_select = False
                 elif rec.VirtualKeyCode == 65:          # Ctrl-A, no easy typing remap to Alt-A
                     state.handle(ActionCode.ACTION_HOME, select)
                 elif rec.VirtualKeyCode == 69:          # Ctrl-E
@@ -414,7 +416,7 @@ def main():
                     state.handle(ActionCode.ACTION_BACKSPACE_WORD)
                 elif rec.VirtualKeyCode == 191:         # Alt-/
                     state.handle(ActionCode.ACTION_EXPAND)
-                elif rec.VirtualKeyCode == 75:          # Alt-K 
+                elif rec.VirtualKeyCode == 75:          # Alt-K
                     state.handle(ActionCode.ACTION_PREV)
                 elif rec.VirtualKeyCode == 74:          # Alt-J
                     state.handle(ActionCode.ACTION_NEXT)
@@ -791,10 +793,23 @@ def save_history(lines, filename, length):
         history_file = codecs.open(filename, 'r', 'utf8', 'replace')
         history_to_save = [line.rstrip(u'\n') for line in history_file.readlines()]
         history_file.close()
-        for line in lines:
-            if line in history_to_save:
-                history_to_save.remove(line)
-            history_to_save.append(line)
+        # For performance and correctness of merging history from multiple instances,
+        # only save the last command, this is good because save_history is called after
+        # each command
+        if len(history_to_save) > 0 and lines[-1] == history_to_save[-1]:
+            # no update
+            return
+
+        # assume duplicated could happen at most once
+        for histI in range(len(history_to_save)-1, -1, -1):
+            if history_to_save[histI] == lines[-1]:
+                history_to_save.remove(lines[-1])
+                break
+        history_to_save.append(lines[-1])
+        # for line in lines:
+        #     if line in history_to_save:
+        #         history_to_save.remove(line)
+        #     history_to_save.append(line)
     else:
         # No previous history, save current
         history_to_save = lines
