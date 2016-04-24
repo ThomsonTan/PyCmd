@@ -18,6 +18,7 @@ from pycmd_public import color, appearance, behavior
 from common import apply_settings, sanitize_settings
 
 import string
+import datetime
 
 pycmd_data_dir = None
 pycmd_install_dir = None
@@ -782,6 +783,23 @@ def signal_handler(signum, frame):
         # Emulate a Ctrl-C press
         write_input(67, 0x0008)
 
+def append_tail_datetime(line):
+    return line + datetime.datetime.now().strftime("[%Y/%m/%d %I:%M:%S%p %A]")
+
+def remove_tail_datetime(line):
+    if line[-1] == u']':
+        i = len(line) - 4
+        if i > 0 and line[i] == u'd' and line[i+1] == u'a' and line[i+2] == u'y':
+            i -= 26
+            for j in range(4):
+                k = i - j
+                if k > 0:
+                    if line[k] == u'[':
+                        return line[:k]
+                else:
+                    break;
+    # no tail datetime found
+    return line
 
 def save_history(lines, filename, length):
     """
@@ -796,16 +814,16 @@ def save_history(lines, filename, length):
         # For performance and correctness of merging history from multiple instances,
         # only save the last command, this is good because save_history is called after
         # each command
-        if len(history_to_save) > 0 and lines[-1] == history_to_save[-1]:
+        if len(history_to_save) > 0 and lines[-1] == remove_tail_datetime(history_to_save[-1]):
             # no update
             return
 
         # assume duplicated could happen at most once
-        for histI in range(len(history_to_save)-1, -1, -1):
-            if history_to_save[histI] == lines[-1]:
-                history_to_save.remove(lines[-1])
+        for histI in range(len(history_to_save)-2, -1, -1):
+            if remove_tail_datetime(history_to_save[histI]) == lines[-1]:
+                del history_to_save[histI]
                 break
-        history_to_save.append(lines[-1])
+        history_to_save.append(append_tail_datetime(lines[-1]))
         # for line in lines:
         #     if line in history_to_save:
         #         history_to_save.remove(line)
@@ -829,7 +847,7 @@ def read_history(filename):
     """
     if os.path.isfile(filename):
         history_file = codecs.open(filename, 'r', 'utf8', 'replace')
-        history = [line.rstrip(u'\n\r') for line in history_file.readlines()]
+        history = [remove_tail_datetime(line.rstrip(u'\n\r')) for line in history_file.readlines()]
         history_file.close()
     else:
         print 'Warning: Can\'t open ' + os.path.basename(filename) + '!'
