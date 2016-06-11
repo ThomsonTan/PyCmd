@@ -372,6 +372,13 @@ def complete_wildcard(line):
         # No expansion was made, return original line
         return (line, [])
 
+def complete_result_map(index, filename):
+    with open(filename, 'r') as file_reader:
+        for line in file_reader:
+            if index == 0:
+                return line.strip()
+            index = index - 1
+    return ''
 
 def complete_env_var(line):
     """

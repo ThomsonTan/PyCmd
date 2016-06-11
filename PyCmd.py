@@ -4,7 +4,7 @@ import win32console, win32gui, win32con
 from common import parse_line, unescape, sep_tokens, sep_chars
 from common import expand_tilde, expand_env_vars
 from common import associated_application, full_executable_path, is_gui_application
-from completion import complete_file, complete_wildcard, complete_env_var, find_common_prefix, has_wildcards, wildcard_to_regex
+from completion import complete_file, complete_wildcard, complete_result_map, complete_env_var, find_common_prefix, has_wildcards, wildcard_to_regex
 from InputState import ActionCode, InputState
 from DirHistory import DirHistory
 import console
@@ -25,6 +25,7 @@ pycmd_install_dir = None
 state = None
 dir_hist = None
 tmpfile = None
+resultMapFilePath =None
 max_cmd_history_lines = 10000
 
 char2int = {'0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9}
@@ -67,11 +68,18 @@ def init():
     (handle, tmpfile) = tempfile.mkstemp(dir = pycmd_data_dir + '\\tmp')
     os.close(handle)
 
+    # Create result map file
+    global resultMapFilePath
+    (handle, resultMapFilePath) = tempfile.mkstemp(dir = pycmd_data_dir + '\\tmp')
+    os.close(handle)
+    os.environ["PYCMD_RESULT_MAP_FILE_PATH"] = resultMapFilePath
+
     # Catch SIGINT to emulate Ctrl-C key combo
     signal.signal(signal.SIGINT, signal_handler)
 
 def deinit():
     os.remove(tmpfile)
+    os.remove(resultMapFilePath)
 
 def main():
     title_prefix = ""
@@ -487,6 +495,17 @@ def main():
                         
                         tokens[-1] = expanded_token
                         completed = ' '.join(tokens)
+                    # handle expand of @a
+                    elif last_token_len == 2 and tokens[-1][0] == '@':
+                        suggestions = []
+                        completed = ' '
+                        complete_index = ord(tokens[-1][1])
+                        if complete_index >= ord('a') and complete_index <= ord('z'):
+                            complete_index = complete_index - ord('a')
+                            completed = complete_result_map(complete_index, resultMapFilePath)
+                            if len(completed) > 0:
+                                tokens[-1] = completed
+                            completed = ' '.join(tokens)
                     elif tokens[-1].strip('"').count('%') % 2 == 1:
                         (completed, suggestions) = complete_env_var(state.before_cursor)
                     elif has_wildcards(tokens[-1]):
