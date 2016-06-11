@@ -144,15 +144,25 @@ def main():
     # Run an empty command to initialize environment
     run_command(['echo', '>', 'NUL'])
 
+    no_new_prompt = False
+
     # Main loop
     while True:
         # Prepare buffer for reading one line
-        state.reset_line(appearance.prompt())
+        if no_new_prompt:
+            # ensure old input are erased
+            state.before_cursor = ''
+            state.after_cursor = ''
+        else:
+            state.reset_line(appearance.prompt())
         scrolling = False
         auto_select = False
         force_repaint = True
         dir_hist.shown = False
-        print
+        if no_new_prompt == False:
+            print
+        else:
+            no_new_prompt = False
 
         while True:
             # Update console title and environment
@@ -621,7 +631,10 @@ def main():
         if tokens == [] or tokens[0] == '':
             continue
         else:
-            print
+            if tokens[0] == u'gv':
+                no_new_prompt = True
+            if no_new_prompt == False:
+                print
             run_command(tokens)
 
         # Add to history
