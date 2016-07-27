@@ -28,7 +28,7 @@ state = None
 dir_hist = None
 tmpfile = None
 resultMapFilePath = None
-commandLineFilePath = None
+cmdLineFilePath = None
 max_cmd_history_lines = 10000
 
 char2int = {'0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9}
@@ -78,8 +78,8 @@ def init():
     os.environ["PYCMD_RESULT_MAP_FILE_PATH"] = resultMapFilePath
 
     # Create command line file
-    global commandLineFilePath
-    (handle, commandLineFilePath) = tempfile.mkstemp(dir = pycmd_data_dir + '\\tmp')
+    global cmdLineFilePath
+    (handle, cmdLineFilePath) = tempfile.mkstemp(dir = pycmd_data_dir + '\\tmp')
     os.close(handle)
 
     # Catch SIGINT to emulate Ctrl-C key combo
@@ -88,7 +88,7 @@ def init():
 def deinit():
     os.remove(tmpfile)
     os.remove(resultMapFilePath)
-    os.remove(commandLineFilePath)
+    os.remove(cmdLineFilePath)
 
 def main():
     title_prefix = ""
@@ -533,10 +533,12 @@ def main():
                                 tokens[-1] = completed
                             completed = ' '.join(tokens)
                         elif complete_index == ord('@'):
-                            commandLineFromFile = open(commandLineFilePath).read().strip();
-                            if len(commandLineFromFile) > 0:
-                                tokens[-1] = commandLineFromFile
-                                completed = commandLineFromFile
+                            cmdLineFromFile = open(cmdLineFilePath)
+                            cmdLineFromFileStrip = cmdLineFromFile.read().strip();
+                            cmdLineFromFile.close()
+                            if len(cmdLineFromFileStrip) > 0:
+                                tokens[-1] = cmdLineFromFileStrip
+                                completed = cmdLineFromFileStrip
 
                     elif tokens[-1].strip('"').count('%') % 2 == 1:
                         (completed, suggestions) = complete_env_var(state.before_cursor)
@@ -684,10 +686,10 @@ def main():
             print ""
             code.InteractiveConsole(locals=globals()).interact('')
         elif len(state.open_app) > 0 and edit_cmd_line:
-            cmdFile = open(commandLineFilePath, 'w')
+            cmdFile = open(cmdLineFilePath, 'w')
             cmdFile.write(' '.join(tokens))
             cmdFile.close()
-            os.system(state.open_app + ' ' + commandLineFilePath)
+            os.system(state.open_app + ' ' + cmdLineFilePath)
             edit_cmd_line = False
             no_new_prompt = True
         else:
