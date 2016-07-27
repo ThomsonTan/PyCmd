@@ -684,6 +684,17 @@ def main():
                      pycmd_data_dir + '\\dir_history',
                      dir_hist.max_len)
 
+def l(file_name = "pycmd_script.py"):
+    pycmd_tmp_dir = pycmd_data_dir + '\\tmp'
+    pycmd_tmp_script_file = pycmd_tmp_dir + '\\' + file_name
+    execfile(pycmd_tmp_script_file, globals())
+
+
+def e(file_name = "pycmd_script.py"):
+    pycmd_tmp_dir = pycmd_data_dir + '\\tmp'
+    pycmd_tmp_script_file = pycmd_tmp_dir + '\\' + file_name
+    os.system(state.open_app + ' ' + pycmd_tmp_script_file)
+
 
 def internal_cd(args):
     """The internal CD command"""
