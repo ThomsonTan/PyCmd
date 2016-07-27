@@ -191,8 +191,11 @@ def main():
                 # case then move to upper line, then output from previous line and leave garbages in the current line
                 backwardlen = len(remove_escape_sequences(state.prev_prompt) + state.prev_before_cursor)
                 # backwardlen should > 0
-                if backwardlen % console.get_buffer_size()[0] == 0 :
-                    backwardlen = backwardlen - 1
+                # if backwardlen % console.get_buffer_size()[0] == 0 :
+                # when there are multiple lines, delete the current line to the begining then delete one more,
+                # cursor will move up to one line above, but the cursor position is the column before the last one (one the last char,
+                # not after it). len - 1 should always be safe
+                backwardlen = backwardlen - 1
                 cursor_backward(backwardlen)
                 stdout.write('\r')
 
