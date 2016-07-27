@@ -136,8 +136,8 @@ def main():
         arg += 1
 
     if title_prefix == "" :
-	    title_prefix = console.get_console_title()
-	
+        title_prefix = console.get_console_title()
+
     if not behavior.quiet_mode:
         # Print some splash text
         try:
@@ -183,7 +183,15 @@ def main():
             if state.changed() or force_repaint:
                 prev_total_len = len(remove_escape_sequences(state.prev_prompt) + state.prev_before_cursor + state.prev_after_cursor)
                 set_cursor_visible(False)
-                cursor_backward(len(remove_escape_sequences(state.prev_prompt) + state.prev_before_cursor))
+                # a regression in Windows 10? Haven't observed this before.
+                # When input reaches the right scroll bar of cmd.exe window, the cursor doesn't move to the next position (next line),
+                # instead it remains on the last input character. Before the fix, cursor_backward moves back one more char in this 
+                # case then move to upper line, then output from previous line and leave garbages in the current line
+                backwardlen = len(remove_escape_sequences(state.prev_prompt) + state.prev_before_cursor)
+                # backwardlen should > 0
+                if backwardlen % console.get_buffer_size()[0] == 0 :
+                    backwardlen = backwardlen - 1
+                cursor_backward(backwardlen)
                 stdout.write('\r')
 
                 # Update the offset of the directory history in case of overflow
@@ -247,15 +255,15 @@ def main():
                     stdout.write(color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.prompt +
                               hint_folder_after +
                               color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.text)
-                              
                 else :
+                    # Output command prompt prefix
                     stdout.write(u'\r' + color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.prompt +
                               state.prompt +
                               color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.text)
                 line = state.before_cursor + state.after_cursor
                 if state.history.filter == '':
                     sel_start, sel_end = state.get_selection_range()
-                    stdout.write(line[:sel_start] +
+                    stdout.write('' + line[:sel_start] +'' +
                                  appearance.colors.selection +
                                  line[sel_start: sel_end] +
                                  color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.text +
@@ -640,7 +648,6 @@ def main():
                     state.handle(ActionCode.ACTION_BACKSPACE)
                 else:                                   # Regular character
                     state.handle(ActionCode.ACTION_INSERT, rec.Char)
-
 
         # Done reading line, now execute
         stdout.write(state.after_cursor)        # Move cursor to the end
