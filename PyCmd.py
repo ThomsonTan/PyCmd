@@ -1,6 +1,8 @@
 import sys, os, tempfile, signal, time, traceback, codecs
 import win32console, win32gui, win32con
 
+import code
+
 from common import parse_line, unescape, sep_tokens, sep_chars
 from common import expand_tilde, expand_env_vars
 from common import associated_application, full_executable_path, is_gui_application
@@ -656,6 +658,9 @@ def main():
         tokens = parse_line(line)
         if tokens == [] or tokens[0] == '':
             continue
+        elif len(tokens) == 1 and tokens[0] == u'p':
+            print ""
+            code.InteractiveConsole(locals=globals()).interact()
         else:
             if tokens[0] == u'gv':
                 no_new_prompt = True
