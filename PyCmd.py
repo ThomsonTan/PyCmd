@@ -663,7 +663,7 @@ def main():
             continue
         elif len(tokens) == 1 and tokens[0] == u'p':
             print ""
-            code.InteractiveConsole(locals=globals()).interact()
+            code.InteractiveConsole(locals=globals()).interact('')
         else:
             if tokens[0] == u'gv':
                 no_new_prompt = True
