@@ -728,6 +728,15 @@ def e(file_name = "pycmd_script.py"):
     os.system(state.open_app + ' ' + pycmd_tmp_script_file)
 
 
+def w(write_str):
+    """Write customize string to command line file for expanding"""
+    if len(write_str) > 0:
+        write_str_strip = write_str.strip()
+        if len(write_str_strip):
+            with open(cmdLineFilePath, 'w') as cmdFile:
+                cmdFile.write(write_str_strip)
+
+
 def internal_cd(args):
     """The internal CD command"""
     try:
