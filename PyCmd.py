@@ -691,6 +691,10 @@ def l(file_name = "pycmd_script.py"):
 
 
 def e(file_name = "pycmd_script.py"):
+    if len(state.open_app) == 0:
+        print "%PYCMD_OPEN_APP% is not configured"
+        return
+
     pycmd_tmp_dir = pycmd_data_dir + '\\tmp'
     pycmd_tmp_script_file = pycmd_tmp_dir + '\\' + file_name
     os.system(state.open_app + ' ' + pycmd_tmp_script_file)
