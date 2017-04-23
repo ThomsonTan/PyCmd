@@ -2,6 +2,8 @@ import sys, os, tempfile, signal, time, traceback, codecs
 import win32console, win32gui, win32con
 
 import code
+import ctypes
+import fileinput
 
 from common import parse_line, unescape, sep_tokens, sep_chars
 from common import expand_tilde, expand_env_vars
@@ -718,15 +720,45 @@ def l(file_name = "pycmd_script.py"):
     execfile(pycmd_tmp_script_file, globals())
 
 
-def e(file_name = "pycmd_script.py"):
+consoleScriptFileName = "pycmd_script.py"
+
+def e(file_name = consoleScriptFileName, clearContent = False):
     if len(state.open_app) == 0:
         print "%PYCMD_OPEN_APP% is not configured"
         return
 
     pycmd_tmp_dir = pycmd_data_dir + '\\tmp'
     pycmd_tmp_script_file = pycmd_tmp_dir + '\\' + file_name
+    openEditCmdLine = state.open_app + ' ' + pycmd_tmp_script_file
+
+    scHeaderLine = '#PyConSc ' + str(py_GetConsoleWindow())
+
+    if (not os.path.exists(pycmd_tmp_script_file)) or (clearContent == True):
+        with open(pycmd_tmp_script_file, 'w') as scFile:
+            # tail # is for set cursor to new line
+            scFile.write(scHeaderLine + '\n\n')
+        os.system(openEditCmdLine + ' 2')
+    else:
+        isFirstLine = True
+        for cmdScLine in fileinput.input(pycmd_tmp_script_file, inplace=1):
+            if isFirstLine:
+                print scHeaderLine
+                isFirstLine = False
+            else:
+                print cmdScLine
+        # only updates console hwnd, keeps last position
+        os.system(openEditCmdLine)
+
     os.system(state.open_app + ' ' + pycmd_tmp_script_file)
 
+
+def n(file_name = consoleScriptFileName):
+    """clear file console script"""
+    e(file_name, True)
+
+def py_GetConsoleWindow():
+    kernel32Dll = ctypes.cdll.LoadLibrary('c:\\windows\\system32\\kernel32.dll')
+    return kernel32Dll.GetConsoleWindow()
 
 def w(write_str):
     """Write customize string to command line file for expanding"""
