@@ -744,8 +744,11 @@ def e(file_name = consoleScriptFileName, clearContent = False):
             if isFirstLine:
                 print scHeaderLine
                 isFirstLine = False
+
+                if not cmdScLine.startswith('#PyConSc '):
+                    print cmdScLine,
             else:
-                print cmdScLine
+                print cmdScLine,
         # only updates console hwnd, keeps last position
         os.system(openEditCmdLine)
 
