@@ -772,6 +772,11 @@ def w(write_str):
                 cmdFile.write(write_str_strip)
 
 
+def cls():
+    """Clear screen on Windows"""
+    os.system('cls')
+
+
 def internal_cd(args):
     """The internal CD command"""
     try:
