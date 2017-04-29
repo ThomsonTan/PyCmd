@@ -739,16 +739,23 @@ def e(file_name = consoleScriptFileName, clearContent = False):
             scFile.write(scHeaderLine + '\n\n')
         os.system(openEditCmdLine + ' 2')
     else:
-        isFirstLine = True
-        for cmdScLine in fileinput.input(pycmd_tmp_script_file, inplace=1):
-            if isFirstLine:
-                print scHeaderLine
-                isFirstLine = False
+        rewriteScFile = True
+        with open(pycmd_tmp_script_file, 'r') as scFile:
+            if scHeaderLine == scFile.readline().strip():
+                rewriteScFile = False
 
-                if not cmdScLine.startswith('#PyConSc '):
+        if rewriteScFile:
+            isFirstLine = True
+            # file content is cleared upon call to fileinput.input
+            for cmdScLine in fileinput.input(pycmd_tmp_script_file, inplace=1):
+                if isFirstLine:
+                    print scHeaderLine
+                    isFirstLine = False
+
+                    if not cmdScLine.startswith('#PyConSc '):
+                        print cmdScLine,
+                else:
                     print cmdScLine,
-            else:
-                print cmdScLine,
         # only updates console hwnd, keeps last position
         os.system(openEditCmdLine)
 
