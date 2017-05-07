@@ -317,10 +317,9 @@ def main():
             #print '\n\n', rec.keyDown, rec.char, rec.virtualKeyCode, rec.controlKeyState, '\n\n'
             if is_ctrl_pressed(rec) and not is_alt_pressed(rec):  # Ctrl-Something
                 if rec.Char == chr(4):                  # Ctrl-D
-                    if state.before_cursor + state.after_cursor == '':
+                    state.handle(ActionCode.ACTION_DELETE)
+                elif rec.Char == chr(26):
                         internal_exit('\r\nBye!')
-                    else:
-                        state.handle(ActionCode.ACTION_DELETE)
                 elif rec.Char == chr(31):                   # Ctrl-_
                     state.handle(ActionCode.ACTION_UNDO_EMACS)
                     auto_select = False
@@ -686,7 +685,104 @@ def main():
             continue
         elif len(tokens) == 1 and tokens[0] == u'p':
             print ""
-            code.InteractiveConsole(locals=globals()).interact('')
+            # code.InteractiveConsole(locals=globals()).interact('')
+            pyInputFirstLine = True
+            currIndent = 0
+            breakInteractiveLoop = False
+            interactiveCon = code.InteractiveConsole(locals=globals())
+            state.reset_line('>>> ')
+            while True:
+                repaint_py_interactive = True
+
+                # processing a line
+                state.before_cursor = ' ' * currIndent
+                prevLen = 0
+                while True:
+                    currLine = state.before_cursor + state.after_cursor
+                    currLen = len(currLine)
+
+                    if repaint_py_interactive:
+                        backwardlen = len(state.after_cursor)
+                        if prevLen > currLen:
+                            spaceLen = prevLen - currLen
+                            backwardlen += spaceLen 
+                        else:
+                            spaceLen = 0
+                        stdout.write('\r' + state.prompt + currLine + ' ' * spaceLen)
+
+                        cursor_backward(backwardlen)
+
+                    prevLen = currLen
+
+                    # repaint by default
+                    repaint_py_interactive = True
+
+                    pyInputRec = read_input()
+                    if is_ctrl_pressed(pyInputRec):
+                        if pyInputRec.VirtualKeyCode == 90: # Ctrl-Z, ord(Char) == 26
+                            breakInteractiveLoop = True
+                            break
+                        elif pyInputRec.Char == chr(4): # Ctrl-D
+                            state.handle(ActionCode.ACTION_BACKSPACE)
+                            state.handle(ActionCode.ACTION_BACKSPACE)
+                            if currIndent > 1:
+                                currIndent -= 2
+                        else:
+                            repaint_py_interactive = False
+                    elif is_alt_pressed(pyInputRec):
+                        if pyInputRec.VirtualKeyCode == 67: # Alt-C
+                            e()
+                            repaint_py_interactive = False
+                    else:
+                        if pyInputRec.Char == chr(0):
+                            if pyInputRec.VirtualKeyCode == 37:
+                                state.handle(ActionCode.ACTION_LEFT)
+                            elif pyInputRec.VirtualKeyCode == 39:
+                                state.handle(ActionCode.ACTION_RIGHT)
+                            elif pyInputRec.VirtualKeyCode == 36:
+                                state.handle(ActionCode.ACTION_HOME)
+                            elif pyInputRec.VirtualKeyCode == 35:
+                                state.handle(ActionCode.ACTION_END)
+                            elif pyInputRec.VirtualKeyCode == 38:
+                                state.handle(ActionCode.ACTION_PREV)
+                            elif pyInputRec.VirtualKeyCode == 40:
+                                state.handle(ActionCode.ACTION_NEXT)
+                            elif pyInputRec.VirtualKeyCode == 46:
+                                state.handle(ActionCode.ACTION_DELETE)
+                        elif pyInputRec.Char == chr(13):
+                            break
+                        elif pyInputRec.Char == chr(8):                # Backspace
+                            state.handle(ActionCode.ACTION_BACKSPACE)
+                            if len(state.before_cursor) > 0:
+                                stdout.write('\b')
+                        elif pyInputRec.Char == chr(27):
+                            state.handle(ActionCode.ACTION_ESCAPE)
+                        elif pyInputRec.Char == '\t':
+                            state.handle(ActionCode.ACTION_INSERT, ' ')
+                            state.handle(ActionCode.ACTION_INSERT, ' ')
+                            stdout.write('  ')
+                            repaint_py_interactive = False
+                            currIndent += 2
+                        else:
+                            state.handle(ActionCode.ACTION_INSERT, pyInputRec.Char)
+                            stdout.write(pyInputRec.Char)
+                            repaint_py_interactive = False
+
+                if breakInteractiveLoop:
+                    break
+                stdout.write('\n')
+                currLine = state.before_cursor + state.after_cursor
+                currLine = currLine.rstrip()
+                if currLine.rstrip().endswith(':'):
+                    currIndent += 2
+                if not interactiveCon.push(currLine):
+                    currIndent = 0 # reset indent
+                    pyInputFirstLine = True
+                    state.reset_line('>>> ')
+                else:
+                    state.reset_line('... ')
+
+            continue
         elif len(state.open_app) > 0 and edit_cmd_line:
             cmdFile = open(cmdLineFilePath, 'w')
             cmdFile.write(' '.join(tokens))
