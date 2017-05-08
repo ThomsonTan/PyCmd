@@ -166,6 +166,7 @@ def main():
     no_new_prompt = False
 
     edit_cmd_line = False
+    interactiveCon = None
 
     # Main loop
     while True:
@@ -689,7 +690,7 @@ def main():
             pyInputFirstLine = True
             currIndent = 0
             breakInteractiveLoop = False
-            interactiveCon = code.InteractiveConsole(locals=globals())
+            interactiveCon = interactiveCon or code.InteractiveConsole(locals=globals())
             pyInputState = InputState()
             pyInputState.reset_line('>>> ')
             while True:
@@ -734,6 +735,11 @@ def main():
                         if pyInputRec.VirtualKeyCode == 67: # Alt-C
                             e()
                             repaint_py_interactive = False
+                        elif pyInputRec.VirtualKeyCode == 74: # Alt-K
+                            pyInputState.handle(ActionCode.ACTION_NEXT)
+                        elif pyInputRec.VirtualKeyCode == 75: # Alt-K
+                            pyInputState.handle(ActionCode.ACTION_PREV)
+
                     else:
                         if pyInputRec.Char == chr(0):
                             if pyInputRec.VirtualKeyCode == 37:
