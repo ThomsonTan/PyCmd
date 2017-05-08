@@ -690,25 +690,26 @@ def main():
             currIndent = 0
             breakInteractiveLoop = False
             interactiveCon = code.InteractiveConsole(locals=globals())
-            state.reset_line('>>> ')
+            pyInputState = InputState()
+            pyInputState.reset_line('>>> ')
             while True:
                 repaint_py_interactive = True
 
                 # processing a line
-                state.before_cursor = ' ' * currIndent
+                pyInputState.before_cursor = ' ' * currIndent
                 prevLen = 0
                 while True:
-                    currLine = state.before_cursor + state.after_cursor
+                    currLine = pyInputState.before_cursor + pyInputState.after_cursor
                     currLen = len(currLine)
 
                     if repaint_py_interactive:
-                        backwardlen = len(state.after_cursor)
+                        backwardlen = len(pyInputState.after_cursor)
                         if prevLen > currLen:
                             spaceLen = prevLen - currLen
                             backwardlen += spaceLen 
                         else:
                             spaceLen = 0
-                        stdout.write('\r' + state.prompt + currLine + ' ' * spaceLen)
+                        stdout.write('\r' + pyInputState.prompt + currLine + ' ' * spaceLen)
 
                         cursor_backward(backwardlen)
 
@@ -723,8 +724,8 @@ def main():
                             breakInteractiveLoop = True
                             break
                         elif pyInputRec.Char == chr(4): # Ctrl-D
-                            state.handle(ActionCode.ACTION_BACKSPACE)
-                            state.handle(ActionCode.ACTION_BACKSPACE)
+                            pyInputState.handle(ActionCode.ACTION_BACKSPACE)
+                            pyInputState.handle(ActionCode.ACTION_BACKSPACE)
                             if currIndent > 1:
                                 currIndent -= 2
                         else:
@@ -736,51 +737,60 @@ def main():
                     else:
                         if pyInputRec.Char == chr(0):
                             if pyInputRec.VirtualKeyCode == 37:
-                                state.handle(ActionCode.ACTION_LEFT)
+                                pyInputState.handle(ActionCode.ACTION_LEFT)
                             elif pyInputRec.VirtualKeyCode == 39:
-                                state.handle(ActionCode.ACTION_RIGHT)
+                                pyInputState.handle(ActionCode.ACTION_RIGHT)
                             elif pyInputRec.VirtualKeyCode == 36:
-                                state.handle(ActionCode.ACTION_HOME)
+                                pyInputState.handle(ActionCode.ACTION_HOME)
                             elif pyInputRec.VirtualKeyCode == 35:
-                                state.handle(ActionCode.ACTION_END)
+                                pyInputState.handle(ActionCode.ACTION_END)
                             elif pyInputRec.VirtualKeyCode == 38:
-                                state.handle(ActionCode.ACTION_PREV)
+                                pyInputState.handle(ActionCode.ACTION_PREV)
                             elif pyInputRec.VirtualKeyCode == 40:
-                                state.handle(ActionCode.ACTION_NEXT)
+                                pyInputState.handle(ActionCode.ACTION_NEXT)
                             elif pyInputRec.VirtualKeyCode == 46:
-                                state.handle(ActionCode.ACTION_DELETE)
+                                pyInputState.handle(ActionCode.ACTION_DELETE)
                         elif pyInputRec.Char == chr(13):
                             break
                         elif pyInputRec.Char == chr(8):                # Backspace
-                            state.handle(ActionCode.ACTION_BACKSPACE)
-                            if len(state.before_cursor) > 0:
+                            pyInputState.handle(ActionCode.ACTION_BACKSPACE)
+                            if len(pyInputState.before_cursor) > 0:
                                 stdout.write('\b')
                         elif pyInputRec.Char == chr(27):
-                            state.handle(ActionCode.ACTION_ESCAPE)
+                            pyInputState.handle(ActionCode.ACTION_ESCAPE)
                         elif pyInputRec.Char == '\t':
-                            state.handle(ActionCode.ACTION_INSERT, ' ')
-                            state.handle(ActionCode.ACTION_INSERT, ' ')
+                            pyInputState.handle(ActionCode.ACTION_INSERT, ' ')
+                            pyInputState.handle(ActionCode.ACTION_INSERT, ' ')
                             stdout.write('  ')
                             repaint_py_interactive = False
                             currIndent += 2
                         else:
-                            state.handle(ActionCode.ACTION_INSERT, pyInputRec.Char)
-                            stdout.write(pyInputRec.Char)
-                            repaint_py_interactive = False
+                            pyInputState.handle(ActionCode.ACTION_INSERT, pyInputRec.Char)
+                            if len(pyInputState.after_cursor) == 0:
+                                stdout.write(pyInputRec.Char)
+                                repaint_py_interactive = False
 
                 if breakInteractiveLoop:
                     break
                 stdout.write('\n')
-                currLine = state.before_cursor + state.after_cursor
+                currLine = pyInputState.before_cursor + pyInputState.after_cursor
                 currLine = currLine.rstrip()
-                if currLine.rstrip().endswith(':'):
+                pyHistLine = currLine
+                if currLine.endswith(':'):
                     currIndent += 2
+                else:
+                    statementList = currLine.split('=>')
+                    if len(statementList) > 1:
+                        ppStateList = ['pycmdPipeVar = ' + ele.strip().replace('$', 'pycmdPipeVar') for ele in statementList]
+                        currLine = ';'.join(ppStateList) + ';print pycmdPipeVar'
                 if not interactiveCon.push(currLine):
                     currIndent = 0 # reset indent
                     pyInputFirstLine = True
-                    state.reset_line('>>> ')
+                    pyInputState.reset_line('>>> ')
                 else:
-                    state.reset_line('... ')
+                    pyInputState.reset_line('... ')
+
+                pyInputState.history.add(pyHistLine)
 
             continue
         elif len(state.open_app) > 0 and edit_cmd_line:
