@@ -827,13 +827,12 @@ def main():
                      pycmd_data_dir + '\\dir_history',
                      dir_hist.max_len)
 
-def l(file_name = "pycmd_script.py"):
+consoleScriptFileName = "pycmd_script.py"
+
+def l(file_name = consoleScriptFileName):
     pycmd_tmp_dir = pycmd_data_dir + '\\tmp'
     pycmd_tmp_script_file = pycmd_tmp_dir + '\\' + file_name
     execfile(pycmd_tmp_script_file, globals())
-
-
-consoleScriptFileName = "pycmd_script.py"
 
 def e(file_name = consoleScriptFileName, clearContent = False):
     if len(state.open_app) == 0:
@@ -891,6 +890,11 @@ def w(write_str):
             with open(cmdLineFilePath, 'w') as cmdFile:
                 cmdFile.write(write_str_strip)
 
+PyCmd_InternalCmds = [l, e, n, w]
+def pcr():
+    """Recover PyCmd internal commands"""
+    global l, e, n, w
+    l, e, n, w = PyCmd_InternalCmds
 
 def cls():
     """Clear screen on Windows"""
