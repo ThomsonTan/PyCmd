@@ -318,9 +318,10 @@ def main():
             #print '\n\n', rec.keyDown, rec.char, rec.virtualKeyCode, rec.controlKeyState, '\n\n'
             if is_ctrl_pressed(rec) and not is_alt_pressed(rec):  # Ctrl-Something
                 if rec.Char == chr(4):                  # Ctrl-D
-                    state.handle(ActionCode.ACTION_DELETE)
-                elif rec.Char == chr(26):
+                    if state.before_cursor + state.after_cursor == '':
                         internal_exit('\r\nBye!')
+                    else:
+                        state.handle(ActionCode.ACTION_DELETE)
                 elif rec.Char == chr(31):                   # Ctrl-_
                     state.handle(ActionCode.ACTION_UNDO_EMACS)
                     auto_select = False
