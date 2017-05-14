@@ -730,10 +730,14 @@ def main():
                             pyInputState.handle(ActionCode.ACTION_BACKSPACE)
                             if currIndent > 1:
                                 currIndent -= 2
+                        elif pyInputRec.VirtualKeyCode == 69:
+                            pyInputState.handle(ActionCode.ACTION_END)
                         else:
                             repaint_py_interactive = False
                     elif is_alt_pressed(pyInputRec):
-                        if pyInputRec.VirtualKeyCode == 67: # Alt-C
+                        if pyInputRec.VirtualKeyCode == 65: # Alt-A
+                            pyInputState.handle(ActionCode.ACTION_HOME)
+                        elif pyInputRec.VirtualKeyCode == 67: # Alt-C
                             e()
                             repaint_py_interactive = False
                         elif pyInputRec.VirtualKeyCode == 74: # Alt-K
