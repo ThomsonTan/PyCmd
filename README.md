@@ -4,9 +4,9 @@ PyCmd (cmd extended by Python)
 A fork of PyCmd from https://sourceforge.net/projects/pycmd/ with some extensions.
 
 ------
-Installation:
-  1. Install Python 2.7 (https://www.python.org/ftp/python/2.7.14/python-2.7.14.msi).
-  2. Install pywin32-217.win32-py2.7 (https://sourceforge.net/projects/pywin32/files/pywin32/Build%20217/pywin32-217.zip/download).
+Installation guide:
+  1. Install Python 2.7 from <a href="https://www.python.org/ftp/python/2.7.14/python-2.7.14.msi">here<a/>.
+  2. Install pywin32-217.win32-py2.7 from <a href="https://sourceforge.net/projects/pywin32/files/pywin32/Build%20217/pywin32-217.win32-py2.7.exe/download">here</a>.
   3. Download or clone this project to local folder.
   4. Lauch PyCmd via `python.exe PyCmd.py` in any cmd window.
 
