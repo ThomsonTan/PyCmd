@@ -1,6 +1,6 @@
 from CommandHistory import CommandHistory
 from common import fuzzy_match, word_sep
-import win32clipboard as wclip
+import ctypes
 import os
 
 class ActionCode:
@@ -73,6 +73,8 @@ class InputState:
         self.last_action = ActionCode.ACTION_none
 
         self.open_app = os.path.expandvars("%PYCMD_OPEN_APP%")
+
+        self.user32_dll = ctypes.windll.user32
 
         # Action handlers
         self.handlers = {
@@ -370,10 +372,13 @@ class InputState:
 
     def key_copy(self):
         """Copy selection to clipboard"""
-        wclip.OpenClipboard()
-        wclip.EmptyClipboard()
-        wclip.SetClipboardText(self.get_selection())
-        wclip.CloseClipboard()
+        """Seems this copy/paste function is no longer needed"""
+        """As copy/paste is supported natively by cmd.exe"""
+        hwnd = ctypes.wintypes.HWND(0)
+        self.user32_dll.OpenClipboard(hwnd);
+        self.user32_dll.EmptyClipboard();
+        self.user32_dll.SetClipboardData(1, self.get_selection()) # 1 is CF_TEXT
+        self.user32_dll.CloseClipboard();
         self.history.reset()
 
     def key_cut(self):
@@ -384,40 +389,50 @@ class InputState:
 
     def key_paste(self):
         """Paste from clipboard"""
-        wclip.OpenClipboard()
-        if wclip.IsClipboardFormatAvailable(wclip.CF_TEXT):
-            text = wclip.GetClipboardData()
-            
-            # Purge garbage chars that some apps put in the clipboard
-            if text.find('\0') >= 0:
-                text = text[:text.find('\0')]
-            
-            # Convert newlines to blanks
-            text = text.replace('\r', '').replace('\n', ' ')
+        pass
+        #wclip.OpenClipboard()
+        #if wclip.IsClipboardFormatAvailable(wclip.CF_TEXT):
+        #    text = wclip.GetClipboardData()
+        #    
+        #    # Purge garbage chars that some apps put in the clipboard
+        #    if text.find('\0') >= 0:
+        #        text = text[:text.find('\0')]
+        #    
+        #    # Convert newlines to blanks
+        #    text = text.replace('\r', '').replace('\n', ' ')
 
-            # Insert into command line
-            if self.get_selection() != '':
-                self.delete_selection()
-            self.before_cursor = self.before_cursor + text
-            self.reset_selection()
-        wclip.CloseClipboard()
-        self.history.reset()
+        #    # Insert into command line
+        #    if self.get_selection() != '':
+        #        self.delete_selection()
+        #    self.before_cursor = self.before_cursor + text
+        #    self.reset_selection()
+        #wclip.CloseClipboard()
+        #self.history.reset()
 
     def open_clip_board(self):
         """Pass clipboard content to %PYCMD_OPEN_APP%"""
         if len(self.open_app) == 0:
             return
 
-        wclip.OpenClipboard()
-        if wclip.IsClipboardFormatAvailable(wclip.CF_TEXT):
-            text = wclip.GetClipboardData()
+        hwnd = ctypes.wintypes.HWND(0)
+        self.user32_dll.OpenClipboard(hwnd);
+        self.user32_dll.CloseClipboard();
+        if self.user32_dll.IsClipboardFormatAvailable(1): #1 is CF_TEXT
+            text = ''
+            GetClipboardData = self.user32_dll.GetClipboardData
+            GetClipboardData.argtypes = [ctypes.wintypes.UINT]
+            GetClipboardData.restype = wintypes.HANDLE
+            pcontents = GetClipboardData(1)
+            if pcontents:
+                text = ctypes.c_char_p(pcontents).value
 
             #Purge garbage chars that some apps put in the clipboard
             if text.find('\0') >= 0:
                 text = text[:text.find('\0')]
 
-            os.system("cmd.exe /c" + self.open_app + " " + text)
-        wclip.CloseClipboard()
+            if len(text) > 0:
+                os.system("cmd.exe /c" + self.open_app + " " + text)
+        self.user32_dll.CloseClipboard();
 
     def key_insert(self, text):
         """Insert text at the current cursor position"""

@@ -324,5 +324,7 @@ class ColorOutputStream:
     def write(self, str):
         """Dispatch printing to our enhanced write function"""
         write_str(str)
+    def __getattr__(self, name):
+        return getattr(sys.__stdout__, name)
 
 sys.stdout = ColorOutputStream()

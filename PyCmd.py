@@ -684,124 +684,14 @@ def main():
         tokens = parse_line(line)
         if tokens == [] or tokens[0] == '':
             continue
-        elif len(tokens) == 1 and tokens[0] == u'p':
-            print ""
-            # code.InteractiveConsole(locals=globals()).interact('')
-            pyInputFirstLine = True
-            currIndent = 0
-            breakInteractiveLoop = False
-            interactiveCon = interactiveCon or code.InteractiveConsole(locals=globals())
-            pyInputState = InputState()
-            pyInputState.reset_line('>>> ')
-            while True:
-                repaint_py_interactive = True
-
-                # processing a line
-                pyInputState.before_cursor = ' ' * currIndent
-                prevLen = 0
-                while True:
-                    currLine = pyInputState.before_cursor + pyInputState.after_cursor
-                    currLen = len(currLine)
-
-                    if repaint_py_interactive:
-                        backwardlen = len(pyInputState.after_cursor)
-                        if prevLen > currLen:
-                            spaceLen = prevLen - currLen
-                            backwardlen += spaceLen 
-                        else:
-                            spaceLen = 0
-                        stdout.write('\r' + pyInputState.prompt + currLine + ' ' * spaceLen)
-
-                        cursor_backward(backwardlen)
-
-                    prevLen = currLen
-
-                    # repaint by default
-                    repaint_py_interactive = True
-
-                    pyInputRec = read_input()
-                    if is_ctrl_pressed(pyInputRec):
-                        if pyInputRec.VirtualKeyCode == 90: # Ctrl-Z, ord(Char) == 26
-                            breakInteractiveLoop = True
-                            break
-                        elif pyInputRec.Char == chr(4): # Ctrl-D
-                            pyInputState.handle(ActionCode.ACTION_BACKSPACE)
-                            pyInputState.handle(ActionCode.ACTION_BACKSPACE)
-                            if currIndent > 1:
-                                currIndent -= 2
-                        elif pyInputRec.VirtualKeyCode == 69:
-                            pyInputState.handle(ActionCode.ACTION_END)
-                        else:
-                            repaint_py_interactive = False
-                    elif is_alt_pressed(pyInputRec):
-                        if pyInputRec.VirtualKeyCode == 65: # Alt-A
-                            pyInputState.handle(ActionCode.ACTION_HOME)
-                        elif pyInputRec.VirtualKeyCode == 67: # Alt-C
-                            e()
-                            repaint_py_interactive = False
-                        elif pyInputRec.VirtualKeyCode == 74: # Alt-K
-                            pyInputState.handle(ActionCode.ACTION_NEXT)
-                        elif pyInputRec.VirtualKeyCode == 75: # Alt-K
-                            pyInputState.handle(ActionCode.ACTION_PREV)
-
-                    else:
-                        if pyInputRec.Char == chr(0):
-                            if pyInputRec.VirtualKeyCode == 37:
-                                pyInputState.handle(ActionCode.ACTION_LEFT)
-                            elif pyInputRec.VirtualKeyCode == 39:
-                                pyInputState.handle(ActionCode.ACTION_RIGHT)
-                            elif pyInputRec.VirtualKeyCode == 36:
-                                pyInputState.handle(ActionCode.ACTION_HOME)
-                            elif pyInputRec.VirtualKeyCode == 35:
-                                pyInputState.handle(ActionCode.ACTION_END)
-                            elif pyInputRec.VirtualKeyCode == 38:
-                                pyInputState.handle(ActionCode.ACTION_PREV)
-                            elif pyInputRec.VirtualKeyCode == 40:
-                                pyInputState.handle(ActionCode.ACTION_NEXT)
-                            elif pyInputRec.VirtualKeyCode == 46:
-                                pyInputState.handle(ActionCode.ACTION_DELETE)
-                        elif pyInputRec.Char == chr(13):
-                            break
-                        elif pyInputRec.Char == chr(8):                # Backspace
-                            pyInputState.handle(ActionCode.ACTION_BACKSPACE)
-                            if len(pyInputState.before_cursor) > 0:
-                                stdout.write('\b')
-                        elif pyInputRec.Char == chr(27):
-                            pyInputState.handle(ActionCode.ACTION_ESCAPE)
-                        elif pyInputRec.Char == '\t':
-                            pyInputState.handle(ActionCode.ACTION_INSERT, ' ')
-                            pyInputState.handle(ActionCode.ACTION_INSERT, ' ')
-                            stdout.write('  ')
-                            repaint_py_interactive = False
-                            currIndent += 2
-                        else:
-                            pyInputState.handle(ActionCode.ACTION_INSERT, pyInputRec.Char)
-                            if len(pyInputState.after_cursor) == 0:
-                                stdout.write(pyInputRec.Char)
-                                repaint_py_interactive = False
-
-                if breakInteractiveLoop:
-                    break
-                stdout.write('\n')
-                currLine = pyInputState.before_cursor + pyInputState.after_cursor
-                currLine = currLine.rstrip()
-                pyHistLine = currLine
-                if currLine.endswith(':'):
-                    currIndent += 2
-                else:
-                    statementList = currLine.split('=>')
-                    if len(statementList) > 1:
-                        ppStateList = ['pycmdPipeVar = ' + ele.strip().replace('$', 'pycmdPipeVar') for ele in statementList]
-                        currLine = ';'.join(ppStateList) + ';print pycmdPipeVar'
-                if not interactiveCon.push(currLine):
-                    currIndent = 0 # reset indent
-                    pyInputFirstLine = True
-                    pyInputState.reset_line('>>> ')
-                else:
-                    pyInputState.reset_line('... ')
-
-                pyInputState.history.add(pyHistLine)
-
+        elif len(tokens) == 1 and tokens[0] == u'i':
+            print("")
+            try:
+                IPython = __import__('IPython')
+                IPython.embed(banner1='')
+            except Exception, e:
+                print("Missing IPython")
+            #run_command([u'c:\\python27\\python.exe', u'-c', u'"import IPython;IPython.embed(banner1=\'\')"'])
             continue
         elif len(state.open_app) > 0 and edit_cmd_line:
             cmdFile = open(cmdLineFilePath, 'w')
@@ -976,12 +866,12 @@ def run_command(tokens):
         if ctypes.windll.user32.GetForegroundWindow() != console_window and time.time() - start_time > 15:
             # If the window is inactive, flash after long tasks
             flashwinfo = console.USER32_FLASHWINFO()
-            flashwinfo.Size = ctypes.size(console.USER32_FLASHWINFO)
+            flashwinfo.Size = ctypes.sizeof(console.USER32_FLASHWINFO)
             flashwinfo.hwnd = console_window
             flashwinfo.flags = 0x3 # FLASHW_ALL
             flashwinfo.count = 3
             flashwinfo.Timeout = 750
-            ctypes.windll.user32.FlashWindowEx([flashwinfo])
+            ctypes.windll.user32.FlashWindowEx(ctypes.byref(flashwinfo))
 
 def run_in_cmd(tokens):
     pseudo_vars = ['CD', 'DATE', 'ERRORLEVEL', 'RANDOM', 'TIME']
