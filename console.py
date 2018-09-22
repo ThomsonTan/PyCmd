@@ -3,13 +3,14 @@
 #
 import ctypes, sys
 from ctypes import Structure, Union, c_int, c_long, c_char, c_wchar, c_short, pointer, byref
-from ctypes.wintypes import BOOL, WORD, DWORD
-from win32console import GetStdHandle, STD_INPUT_HANDLE, PyINPUT_RECORDType, KEY_EVENT
-from win32con import LEFT_CTRL_PRESSED, RIGHT_CTRL_PRESSED
-from win32con import LEFT_ALT_PRESSED, RIGHT_ALT_PRESSED
-from win32con import SHIFT_PRESSED
+from ctypes.wintypes import BOOL, WORD, DWORD, WCHAR, HWND
 
-import pywintypes       # Unneeded import to trick cx_freeze into including the DLL
+KEY_EVENT = 0x1
+SHIFT_PRESSED = 0x10
+LEFT_ALT_PRESSED = 0x2
+RIGHT_ALT_PRESSED = 0x1
+LEFT_CTRL_PRESSED = 0x8
+RIGHT_CTRL_PRESSED = 0x4
 
 global FOREGROUND_RED
 global FOREGROUND_GREEN
@@ -54,6 +55,22 @@ class KEY_EVENT_RECORD(Structure):
                 ('char', c_char),
                 ('controlKeyState', DWORD)]
     
+class INPUT_RECORD(Structure):
+    _fields_ = [('EventType', WORD),
+                ('KeyDown', BOOL),
+                ('RepeatCount', WORD),
+                ('VirtualKeyCode', WORD),
+                ('VirtualScanCode', WORD),
+                ('Char', WCHAR),
+                ('ControlKeyState', DWORD)]
+
+class USER32_FLASHWINFO(Structure):
+    _fields_ = [('Size', DWORD),
+                ('hwnd', HWND),
+                ('flags', DWORD),
+                ('count', DWORD),
+                ('Timeout', DWORD)]
+
 def get_text_attributes():
     """Get the current foreground/background RGB components"""
     buffer_info = CONSOLE_SCREEN_BUFFER_INFO()
@@ -134,17 +151,21 @@ def scroll_buffer(lines):
 def read_input():
     """Read one input event from the console input buffer"""
     while True:
-        record = stdin_handle.ReadConsoleInput(1)[0]
-        if record.EventType == KEY_EVENT and record.KeyDown:
+        record = INPUT_RECORD()
+        numEventsWritten = c_int()
+        ctypes.windll.kernel32.ReadConsoleInputA(stdin_handle, byref(record), 1, byref(numEventsWritten))
+        if numEventsWritten.value == 1 and record.EventType == KEY_EVENT and record.KeyDown:
             return record
 
 def write_input(key_code, control_state):
     """Emulate a key press with the given key code and control key mask"""
-    record = PyINPUT_RECORDType(KEY_EVENT)
+    record = INPUT_RECORD()
+    record.EventType = KEY_EVENT
     record.KeyDown = True
     record.VirtualKeyCode = key_code
     record.ControlKeyState = control_state
-    stdin_handle.WriteConsoleInput([record])
+    numEventsWritten = c_int()
+    ctypes.windll.kernel32.WriteConsoleInputA(stdin_handle, byref(record), 1, byref(numEventsWritten))
 
 def write_str(s):
     """
@@ -286,7 +307,7 @@ BACKGROUND_RED = 0x40
 BACKGROUND_BRIGHT = 0x80
 BACKGROUND_WHITE = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED
 
-stdin_handle = GetStdHandle(STD_INPUT_HANDLE)
+stdin_handle = ctypes.windll.kernel32.GetStdHandle(-10)
 stdout_handle = ctypes.windll.kernel32.GetStdHandle(-11)
 
 class ColorOutputStream:

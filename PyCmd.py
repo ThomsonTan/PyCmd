@@ -1,5 +1,4 @@
 import sys, os, tempfile, signal, time, traceback, codecs
-import win32console, win32gui, win32con
 
 import code
 import ctypes
@@ -973,10 +972,16 @@ def run_command(tokens):
         # Regular (external) command
         start_time = time.time()
         run_in_cmd(tokens)
-        console_window = win32console.GetConsoleWindow()
-        if win32gui.GetForegroundWindow() != console_window and time.time() - start_time > 15:
+        console_window = ctypes.windll.kernel32.GetConsoleWindow()
+        if ctypes.windll.user32.GetForegroundWindow() != console_window and time.time() - start_time > 15:
             # If the window is inactive, flash after long tasks
-            win32gui.FlashWindowEx(console_window, win32con.FLASHW_ALL, 3, 750)
+            flashwinfo = console.USER32_FLASHWINFO()
+            flashwinfo.Size = ctypes.size(console.USER32_FLASHWINFO)
+            flashwinfo.hwnd = console_window
+            flashwinfo.flags = 0x3 # FLASHW_ALL
+            flashwinfo.count = 3
+            flashwinfo.Timeout = 750
+            ctypes.windll.user32.FlashWindowEx([flashwinfo])
 
 def run_in_cmd(tokens):
     pseudo_vars = ['CD', 'DATE', 'ERRORLEVEL', 'RANDOM', 'TIME']
