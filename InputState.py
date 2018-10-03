@@ -416,12 +416,11 @@ class InputState:
 
         hwnd = ctypes.wintypes.HWND(0)
         self.user32_dll.OpenClipboard(hwnd);
-        self.user32_dll.CloseClipboard();
         if self.user32_dll.IsClipboardFormatAvailable(1): #1 is CF_TEXT
             text = ''
             GetClipboardData = self.user32_dll.GetClipboardData
             GetClipboardData.argtypes = [ctypes.wintypes.UINT]
-            GetClipboardData.restype = wintypes.HANDLE
+            GetClipboardData.restype = ctypes.wintypes.HANDLE
             pcontents = GetClipboardData(1)
             if pcontents:
                 text = ctypes.c_char_p(pcontents).value
