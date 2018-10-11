@@ -705,6 +705,11 @@ def main():
                 no_new_prompt = True
             if no_new_prompt == False:
                 print
+            if tokens[0] == u'start' and len(tokens) == 2:
+                tokens[1] = tokens[1].replace('/', '\\')
+            elif tokens[0] == u'which':
+                tokens[0] = u'where'
+
             run_command(tokens)
 
         # Add to history
