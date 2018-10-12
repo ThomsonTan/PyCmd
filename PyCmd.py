@@ -705,15 +705,16 @@ def main():
                 no_new_prompt = True
             if no_new_prompt == False:
                 print
-            if tokens[0] == u's' and len(tokens) == 2:
+            if tokens[0] == u's':
                 tokens[0] = u'start'
-                cmd_arg1 = tokens[1].replace('/', '\\')
-                if os.path.isfile(cmd_arg1):
-                    try:
-                        cmd_arg1 = cmd_arg1[0:(cmd_arg1.rindex('\\') + 1)]
-                    except:
-                        cmd_arg1 = u'.'
-                tokens[1] = cmd_arg1
+                if len(tokens) == 2:
+                    cmd_arg1 = tokens[1].replace('/', '\\')
+                    if os.path.isfile(cmd_arg1):
+                        try:
+                            cmd_arg1 = cmd_arg1[0:(cmd_arg1.rindex('\\') + 1)]
+                        except:
+                            cmd_arg1 = u'.'
+                    tokens[1] = cmd_arg1
             elif tokens[0] == u'which':
                 tokens[0] = u'where'
 
