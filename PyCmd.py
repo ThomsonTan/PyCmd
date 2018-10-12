@@ -23,6 +23,8 @@ from common import apply_settings, sanitize_settings
 import string
 import datetime
 
+import PyCmdUtils
+
 pycmd_data_dir = None
 pycmd_install_dir = None
 state = None
@@ -424,6 +426,8 @@ def main():
                     state.handle(ActionCode.ACTION_HOME)
                 elif rec.VirtualKeyCode == 66:          # Alt-B
                     state.handle(ActionCode.ACTION_BACKSPACE_WORD)
+                elif rec.VirtualKeyCode == 67:          # Alt-C
+                    state.handle(ActionCode.ACTION_SWITCH_TO_GVIM)
                 elif rec.VirtualKeyCode == 69:          # Alt-E
                     force_repaint = False
                     state.handle(ActionCode.ACTION_OPEN_CLIPBOARD)
@@ -700,6 +704,8 @@ def main():
             os.system(state.open_app + ' ' + cmdLineFilePath)
             edit_cmd_line = False
             no_new_prompt = True
+        elif tokens[0] == u'cg': # Connect to GVim window
+            pycmdutils.ConnectWithGVim()
         else:
             if tokens[0] == u'gv':
                 no_new_prompt = True

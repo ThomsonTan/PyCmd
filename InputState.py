@@ -2,6 +2,7 @@ from CommandHistory import CommandHistory
 from common import fuzzy_match, word_sep
 import ctypes
 import os
+import PyCmdUtils
 
 class ActionCode:
     """
@@ -32,6 +33,7 @@ class ActionCode:
     ACTION_UNDO_EMACS = 22
     ACTION_EXPAND = 23
     ACTION_OPEN_CLIPBOARD = 24
+    ACTION_SWITCH_TO_GVIM = 25
 
 class InputState:
     """
@@ -103,6 +105,7 @@ class InputState:
             ActionCode.ACTION_REDO: self.key_redo,
             ActionCode.ACTION_UNDO_EMACS: self.key_undo_emacs, 
             ActionCode.ACTION_EXPAND: self.key_expand,
+            ActionCode.ACTION_SWITCH_TO_GVIM: self.switch_to_gvim,
             }
             
         # Action categories
@@ -377,6 +380,7 @@ class InputState:
         hwnd = ctypes.wintypes.HWND(0)
         self.user32_dll.OpenClipboard(hwnd);
         self.user32_dll.EmptyClipboard();
+        print self.get_selection()
         self.user32_dll.SetClipboardData(1, self.get_selection()) # 1 is CF_TEXT
         self.user32_dll.CloseClipboard();
         self.history.reset()
@@ -549,3 +553,7 @@ class InputState:
         """Return the current selected text"""
         start, end = self.get_selection_range()
         return (self.before_cursor + self.after_cursor)[start: end]
+
+    def switch_to_gvim(self):
+        pycmdutils.SwitchToGVim()
+
