@@ -705,7 +705,7 @@ def main():
             edit_cmd_line = False
             no_new_prompt = True
         elif tokens[0] == u'cg': # Connect to GVim window
-            pycmdutils.ConnectWithGVim()
+            PyCmdUtils.ConnectWithGVim()
         else:
             if tokens[0] == u'gv':
                 no_new_prompt = True

@@ -555,5 +555,5 @@ class InputState:
         return (self.before_cursor + self.after_cursor)[start: end]
 
     def switch_to_gvim(self):
-        pycmdutils.SwitchToGVim()
+        PyCmdUtils.SwitchToGVim()
 
