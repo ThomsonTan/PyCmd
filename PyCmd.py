@@ -427,6 +427,7 @@ def main():
                 elif rec.VirtualKeyCode == 66:          # Alt-B
                     state.handle(ActionCode.ACTION_BACKSPACE_WORD)
                 elif rec.VirtualKeyCode == 67:          # Alt-C
+                    force_repaint = False
                     state.handle(ActionCode.ACTION_SWITCH_TO_GVIM)
                 elif rec.VirtualKeyCode == 69:          # Alt-E
                     force_repaint = False
