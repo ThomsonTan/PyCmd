@@ -794,8 +794,7 @@ def n(file_name = consoleScriptFileName):
     e(file_name, True)
 
 def py_GetConsoleWindow():
-    kernel32Dll = ctypes.cdll.LoadLibrary('c:\\windows\\system32\\kernel32.dll')
-    return kernel32Dll.GetConsoleWindow()
+    return ctypes.windll.kernel32.GetConsoleWindow()
 
 def w(write_str):
     """Write customize string to command line file for expanding"""
