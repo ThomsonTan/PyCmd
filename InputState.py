@@ -4,6 +4,12 @@ import ctypes
 import os
 import PyCmdUtils
 
+user32 = ctypes.windll.user32
+kernel32 = ctypes.windll.kernel32
+GlobalLock = ctypes.windll.kernel32.GlobalLock
+GlobalAlloc = ctypes.windll.kernel32.GlobalAlloc
+GlobalUnlock = ctypes.windll.kernel32.GlobalUnlock
+
 class ActionCode:
     """
     Enum-like class that defines codes for input manipulation actions
@@ -393,25 +399,29 @@ class InputState:
 
     def key_paste(self):
         """Paste from clipboard"""
-        pass
-        #wclip.OpenClipboard()
-        #if wclip.IsClipboardFormatAvailable(wclip.CF_TEXT):
-        #    text = wclip.GetClipboardData()
-        #    
-        #    # Purge garbage chars that some apps put in the clipboard
-        #    if text.find('\0') >= 0:
-        #        text = text[:text.find('\0')]
-        #    
-        #    # Convert newlines to blanks
-        #    text = text.replace('\r', '').replace('\n', ' ')
 
-        #    # Insert into command line
-        #    if self.get_selection() != '':
-        #        self.delete_selection()
-        #    self.before_cursor = self.before_cursor + text
-        #    self.reset_selection()
-        #wclip.CloseClipboard()
-        #self.history.reset()
+        hwnd = ctypes.wintypes.HWND(0)
+        user32.OpenClipboard(hwnd);
+        if user32.IsClipboardFormatAvailable(1):
+            data_handle = user32.GetClipboardData(1) # 1 is CF_TEXT
+            GlobalLock.restype = ctypes.c_char_p
+            text = GlobalLock(ctypes.c_int(data_handle))
+            GlobalUnlock(data_handle)
+            
+            # Purge garbage chars that some apps put in the clipboard
+            if text.find('\0') >= 0:
+                text = text[:text.find('\0')]
+            
+            # Convert newlines to blanks
+            text = text.replace('\r', '').replace('\n', ' ')
+
+            # Insert into command line
+            if self.get_selection() != '':
+                self.delete_selection()
+            self.before_cursor = self.before_cursor + text
+            self.reset_selection()
+        user32.CloseClipboard()
+        self.history.reset()
 
     def open_clip_board(self):
         """Pass clipboard content to %PYCMD_OPEN_APP%"""

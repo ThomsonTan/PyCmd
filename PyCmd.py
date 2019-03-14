@@ -384,9 +384,9 @@ def main():
                 # elif rec.VirtualKeyCode == 87:          # Ctrl-W
                 #     state.handle(ActionCode.ACTION_CUT)
                 #     auto_select = False
-                elif rec.VirtualKeyCode == 86:          # Ctrl-V
-                    state.handle(ActionCode.ACTION_PASTE)
-                    auto_select = False
+                #elif rec.VirtualKeyCode == 86:          # Ctrl-V
+                #    state.handle(ActionCode.ACTION_PASTE)
+                #    auto_select = False
                 # elif rec.VirtualKeyCode == 89:          # Ctrl-Y
                 #     state.handle(ActionCode.ACTION_PASTE)
                 #     auto_select = False
@@ -458,6 +458,9 @@ def main():
                         state.handle(ActionCode.ACTION_UNDO)
                     else:
                         state.handle(ActionCode.ACTION_REDO) #Alt-Shift-U
+                elif rec.VirtualKeyCode == 86:          # Alt-V
+                    state.handle(ActionCode.ACTION_PASTE)
+                    auto_select = False
                 elif rec.VirtualKeyCode == 87:          # Alt-W
                     state.handle(ActionCode.ACTION_COPY)
                     state.reset_selection()
