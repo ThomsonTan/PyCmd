@@ -687,7 +687,15 @@ def main():
         stdout.write(color.Fore.DEFAULT + color.Back.DEFAULT)
         line = (state.before_cursor + state.after_cursor).strip()
         tokens = parse_line(line)
-        if tokens == [] or tokens[0] == '':
+        # Open command line editor even for empty command line
+        if len(state.open_app) > 0 and edit_cmd_line:
+            cmdFile = open(cmdLineFilePath, 'w')
+            cmdFile.write(' '.join(tokens))
+            cmdFile.close()
+            os.system(state.open_app + ' ' + cmdLineFilePath)
+            edit_cmd_line = False
+            no_new_prompt = True
+        elif tokens == [] or tokens[0] == '':
             continue
         elif len(tokens) == 1 and tokens[0] == u'i':
             print("")
