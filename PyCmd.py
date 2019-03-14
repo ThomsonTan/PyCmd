@@ -706,13 +706,6 @@ def main():
                 print("Missing IPython")
             #run_command([u'c:\\python27\\python.exe', u'-c', u'"import IPython;IPython.embed(banner1=\'\')"'])
             continue
-        elif len(state.open_app) > 0 and edit_cmd_line:
-            cmdFile = open(cmdLineFilePath, 'w')
-            cmdFile.write(' '.join(tokens))
-            cmdFile.close()
-            os.system(state.open_app + ' ' + cmdLineFilePath)
-            edit_cmd_line = False
-            no_new_prompt = True
         elif tokens[0] == u'cg': # Connect to GVim window
             PyCmdUtils.ConnectWithGVim()
         else:
@@ -727,6 +720,9 @@ def main():
                     tokens[1] = cmd_arg1
             elif tokens[0] == u'which':
                 tokens[0] = u'where'
+
+            # Escape / as \ in app path
+            tokens[0] = tokens[0].replace('/', '\\')
 
             run_command(tokens)
 
