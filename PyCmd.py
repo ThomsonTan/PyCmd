@@ -692,18 +692,19 @@ def main():
         tokens = parse_line(line)
         if len(state.open_app) > 0 and edit_cmd_line:
             cmdLineFilePathWithLine = cmdLineFilePath
-            cmdFile = open(cmdLineFilePath, 'w')
+            # Why it writes \n on Windows by default, 'w'?, replace str doesn't work
+            cmdFile = open(cmdLineFilePath, 'wb')
             # if no content in command line, write clipboard text to the temporary file
             if tokens == [] or tokens[0] == '':
                 write_str = PyCmdUtils.GetClipboardText()
                 if len(write_str) == 0:
                     continue
-                cmdLineFilePathWithLine += ':$'
+                cmdLineFilePathWithLine += '?$' # nav to the last line
             else:
                 write_str = ' '.join(tokens)
             cmdFile.write(write_str)
             cmdFile.close()
-            os.system(state.open_app + ' ' + cmdLineFilePath)
+            os.system(state.open_app + ' ' + cmdLineFilePathWithLine)
             edit_cmd_line = False
             no_new_prompt = True
         elif tokens == [] or tokens[0] == '':
