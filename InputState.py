@@ -5,10 +5,6 @@ import os
 import PyCmdUtils
 
 user32 = ctypes.windll.user32
-kernel32 = ctypes.windll.kernel32
-GlobalLock = ctypes.windll.kernel32.GlobalLock
-GlobalAlloc = ctypes.windll.kernel32.GlobalAlloc
-GlobalUnlock = ctypes.windll.kernel32.GlobalUnlock
 
 class ActionCode:
     """
@@ -81,6 +77,9 @@ class InputState:
         self.last_action = ActionCode.ACTION_none
 
         self.open_app = os.path.expandvars("%PYCMD_OPEN_APP%")
+        if '%' in self.open_app:
+            print '%PYCMD_OPEN_APP% is not defined!'
+            self.open_app = ''
 
         self.user32_dll = ctypes.windll.user32
 
@@ -400,27 +399,22 @@ class InputState:
     def key_paste(self):
         """Paste from clipboard"""
 
-        hwnd = ctypes.wintypes.HWND(0)
-        user32.OpenClipboard(hwnd);
-        if user32.IsClipboardFormatAvailable(1):
-            data_handle = user32.GetClipboardData(1) # 1 is CF_TEXT
-            GlobalLock.restype = ctypes.c_char_p
-            text = GlobalLock(ctypes.c_int(data_handle))
-            GlobalUnlock(data_handle)
+        text = PyCmdUtils.GetClipboardText()
+        if len(text) == 0:
+            return
             
-            # Purge garbage chars that some apps put in the clipboard
-            if text.find('\0') >= 0:
-                text = text[:text.find('\0')]
-            
-            # Convert newlines to blanks
-            text = text.replace('\r', '').replace('\n', ' ')
+        # Purge garbage chars that some apps put in the clipboard
+        if text.find('\0') >= 0:
+            text = text[:text.find('\0')]
 
-            # Insert into command line
-            if self.get_selection() != '':
-                self.delete_selection()
-            self.before_cursor = self.before_cursor + text
-            self.reset_selection()
-        user32.CloseClipboard()
+        # Convert newlines to blanks
+        text = text.replace('\r', '').replace('\n', ' ')
+
+        # Insert into command line
+        if self.get_selection() != '':
+            self.delete_selection()
+        self.before_cursor = self.before_cursor + text
+        self.reset_selection()
         self.history.reset()
 
     def open_clip_board(self):

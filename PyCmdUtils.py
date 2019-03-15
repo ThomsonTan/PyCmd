@@ -54,3 +54,17 @@ def SwitchToGVim():
     if GVim_hwnd != 0:
         user32.ShowWindow(GVim_hwnd, 5) # SW_SHOW
         user32.SetForegroundWindow(GVim_hwnd)
+
+def GetClipboardText():
+    text = ''
+
+    hwnd = ctypes.wintypes.HWND(0)
+    user32.OpenClipboard(hwnd);
+    if user32.IsClipboardFormatAvailable(1): # 1 is CF_TEXT
+        data_handle = user32.GetClipboardData(1) # 1 is CF_TEXT
+        GlobalLock.restype = ctypes.c_char_p
+        text = GlobalLock(ctypes.c_int(data_handle))
+        GlobalUnlock(data_handle)
+    user32.CloseClipboard()
+
+    return text

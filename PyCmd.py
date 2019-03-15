@@ -690,10 +690,18 @@ def main():
         stdout.write(color.Fore.DEFAULT + color.Back.DEFAULT)
         line = (state.before_cursor + state.after_cursor).strip()
         tokens = parse_line(line)
-        # Open command line editor even for empty command line
         if len(state.open_app) > 0 and edit_cmd_line:
+            cmdLineFilePathWithLine = cmdLineFilePath
             cmdFile = open(cmdLineFilePath, 'w')
-            cmdFile.write(' '.join(tokens))
+            # if no content in command line, write clipboard text to the temporary file
+            if tokens == [] or tokens[0] == '':
+                write_str = PyCmdUtils.GetClipboardText()
+                if len(write_str) == 0:
+                    continue
+                cmdLineFilePathWithLine += ':$'
+            else:
+                write_str = ' '.join(tokens)
+            cmdFile.write(write_str)
             cmdFile.close()
             os.system(state.open_app + ' ' + cmdLineFilePath)
             edit_cmd_line = False
