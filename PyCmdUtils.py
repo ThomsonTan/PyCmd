@@ -18,10 +18,10 @@ memcpy = ctypes.cdll.msvcrt.memcpy
 def ConnectWithGVim():
     global GVim_hwnd
     curr_hwnd = kernel32.GetConsoleWindow()
-    gvim_cmd = "let g:conhwnd=" + str(curr_hwnd)
+    gvim_cmd = b"let g:conhwnd=" + str(curr_hwnd).encode()
     print("\nSwitch to GVim and run below command (already in clipboard) ...")
     print("--------------")
-    print(gvim_cmd)
+    print(gvim_cmd.decode('utf-8'))
     print("--------------")
 
     # set gvim_cmd to clipboard

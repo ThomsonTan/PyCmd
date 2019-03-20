@@ -96,6 +96,8 @@ def deinit():
 def main():
     title_prefix = ""
 
+    console.set_console_mode(4 | console.get_console_mode())
+
     # Apply global and user configurations
     apply_settings(pycmd_install_dir + '\\init.py')
     apply_settings(pycmd_data_dir + '\\init.py')
@@ -149,6 +151,7 @@ def main():
 
     if title_prefix == "" :
         title_prefix = console.get_console_title()
+        # TODO: fix python.exe path exposed in Python3
 
     if not behavior.quiet_mode:
         # Print some splash text
@@ -265,7 +268,6 @@ def main():
                             break;
                     hint_folder = state.prompt[i_id:i_endid]
                     hint_folder_after = state.prompt[i_endid:]
-                    
                     stdout.write(u'\r' + color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.prompt +
                               hint_folder_before)
 
@@ -401,7 +403,7 @@ def main():
                         state.handle(ActionCode.ACTION_REDO)
                     auto_select = False
             elif is_alt_pressed(rec) and not is_ctrl_pressed(rec):      # Alt-Something
-                if rec.VirtualKeyCode in [37, 39, 72, 76] + range(49, 59): # Dir history 
+                if rec.VirtualKeyCode in [37, 39, 72, 76] + list(range(49, 59)): # Dir history 
                     if state.before_cursor + state.after_cursor == '':
                         state.reset_prev_line()
                         if rec.VirtualKeyCode == 37 or rec.VirtualKeyCode == 72: # Alt-Left or Alt-H
@@ -852,6 +854,7 @@ def internal_exit(message = ''):
 
 def run_command(tokens):
     """Execute a command line (treat internal and external appropriately"""
+    stdout.write('\n') # Why needed for Python3?
     if tokens[0] == 'exit':
         internal_exit('Bye!')
     elif tokens[0].lower() == 'cd' and [t for t in tokens if t in sep_tokens] == []:

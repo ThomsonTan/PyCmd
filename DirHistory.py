@@ -78,7 +78,8 @@ class DirHistory:
         # to_remove.remove(self.index)
         to_remove.remove(len(self.locations) -1 )
         # self.index -= len(filter(lambda x: x < self.index, to_remove))
-        map(lambda x: self.locations.pop(x), to_remove)
+        # Python 3 needs convert map to list to force calculation?
+        list(map(lambda x: self.locations.pop(x), to_remove))
         while len(self.locations) > self.max_len:
             # Unusable if it gets too long
             # orignal code use self.index + 8 here, which sounds strange here.

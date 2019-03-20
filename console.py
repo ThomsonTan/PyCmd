@@ -80,6 +80,7 @@ def get_text_attributes():
 
 def set_text_attributes(color):
     """Set foreground/background RGB components for the text to write"""
+    sys.__stdout__.flush() # this one is also needed for Python 3
     ctypes.windll.kernel32.SetConsoleTextAttribute(stdout_handle, color)
 
 def get_console_title():
@@ -90,10 +91,22 @@ def get_console_title():
     # remove the hard coded launch shell name
     filterdTitle = strbuffer.value.replace(b" - pc", b"")
     return filterdTitle
-	
+
 def set_console_title(title):
     """Set the title of the current console"""
     ctypes.windll.kernel32.SetConsoleTitleA(title)
+
+def get_console_mode():
+    hConHandle = stdout_handle
+    console_mode = DWORD()
+    ctypes.windll.kernel32.GetConsoleMode(hConHandle, byref(console_mode))
+    return console_mode.value
+
+def set_console_mode(mode):
+    hConHandle = stdout_handle
+    console_mode = DWORD(mode) 
+    ctypes.windll.kernel32.GetConsoleMode(hConHandle, byref(console_mode))
+    ctypes.windll.kernel32.SetConsoleMode(hConHandle, console_mode)
 
 def move_cursor(x, y):
     """Move the cursor to the specified location"""
@@ -190,9 +203,9 @@ def write_str(s):
                 buf = ''
 
             # Process color commands to compute and set new attributes
-            target = encoded_str[i + 1]
-            command = encoded_str[i + 2]
-            component = encoded_str[i + 3]
+            target = chr(encoded_str[i + 1])
+            command = chr(encoded_str[i + 2])
+            component = chr(encoded_str[i + 3])
             i += 3
 
             # Escape sequence format is [ESC][TGT][OP][COMP], where:
@@ -236,6 +249,7 @@ def write_str(s):
     set_text_attributes(attr)
     if buf:
         sys.__stdout__.write(buf)
+    sys.__stdout__.flush() # Why needed this for Python3?
 
 def remove_escape_sequences(s):
     """
