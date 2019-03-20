@@ -53,7 +53,7 @@ class DirHistory:
         try:
             os.chdir(self.locations[self.index])
             changed = True
-        except(OSError, error):
+        except OSError as error:
             stdout.write('\n  ' + str(error) + '\n')
             self.locations.pop(self.index) 
             self.index -= 1

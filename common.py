@@ -269,7 +269,7 @@ def associated_application(ext):
         
         # We assume a value `similar to '<command> %1 %2'
         return expand_env_vars(parse_line(open_command)[0])
-    except(WindowsError, e):
+    except WindowsError as e:
         return None
 
 
@@ -327,13 +327,13 @@ def is_gui_application(executable):
             if pefile.SUBSYSTEM_TYPE[pe.OPTIONAL_HEADER.Subsystem] == 'IMAGE_SUBSYSTEM_WINDOWS_GUI':
                 # We only return true if all went well
                 result = True
-        except(pefile.PEFormatError, e):
+        except pefile.PEFormatError as e:
             # There's not much we can do if pefile fails
             pass
 
         m.close()
         os.close(fd)
-    except(Exception, e):
+    except Exception as e:
         # Not much we can do for exceptions
         pass
 
@@ -350,7 +350,7 @@ def apply_settings(settings_file):
             # We initialize the dictionary to readily contain the settings
             # structures; anything else needs to be explicitly imported
             execfile(settings_file, pycmd_public.__dict__)
-        except(Exception, e):
+        except Exception as e:
             print('Error encountered when loading ' + settings_file)
             print('Subsequent settings will NOT be applied!')
             traceback.print_exc()

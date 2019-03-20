@@ -716,9 +716,18 @@ def main():
         elif len(tokens) == 1 and tokens[0] == u'i':
             print("")
             try:
-                IPython = __import__('IPython')
-                IPython.embed(banner1='')
-            except (Exception, e):
+                import IPython
+                from traitlets.config import get_config
+                c = get_config()
+                c.InteractiveShellEmbed.colors = "Linux"
+                c.InteractiveShellEmbed.confirm_exit = False
+                # Why below commented code doesn't work?
+                #IPython = __import__('IPython')
+                #traitles = __import__('traitlets')
+                #IPythonConfig = traitles.config.get_config()
+                #IPythonConfig.InteractiveShellEmbed.color = "Linux"
+                IPython.embed(banner1='', config=c)
+            except Exception as e:
                 print("Missing IPython")
             #run_command([u'c:\\python27\\python.exe', u'-c', u'"import IPython;IPython.embed(banner1=\'\')"'])
             continue
@@ -839,7 +848,7 @@ def internal_cd(args):
                 target = target.rstrip(u'\\')
             target = expand_env_vars(target.strip(u'"').strip(u' '))
             os.chdir(target.encode(sys.getfilesystemencoding()))
-    except(OSError, error):
+    except OSError as error:
         stdout.write(u'\n' + str(error).replace('\\\\', '\\').decode(sys.getfilesystemencoding()))
     os.environ['CD'] = os.getcwd()
 
@@ -1073,7 +1082,7 @@ if __name__ == '__main__':
     try:
         init()
         main()
-    except (Exception, e):        
+    except Exception as e:        
         report_file_name = (pycmd_data_dir
                             + '\\crash-' 
                             + time.strftime('%Y%m%d_%H%M%S') 
