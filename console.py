@@ -4,6 +4,7 @@
 import ctypes, sys
 from ctypes import Structure, Union, c_int, c_long, c_char, c_wchar, c_short, pointer, byref
 from ctypes.wintypes import BOOL, WORD, DWORD, WCHAR, HWND
+import functools
 
 KEY_EVENT = 0x1
 SHIFT_PRESSED = 0x10
@@ -87,7 +88,7 @@ def get_console_title():
     size = ctypes.c_short(1024)
     ctypes.windll.kernel32.GetConsoleTitleA(strbuffer, size)
     # remove the hard coded launch shell name
-    filterdTitle = strbuffer.value.replace(" - pc", "")
+    filterdTitle = strbuffer.value.replace(b" - pc", b"")
     return filterdTitle
 	
 def set_console_title(title):
@@ -180,7 +181,7 @@ def write_str(s):
     buf = ''
     attr = get_text_attributes()
     while i < len(encoded_str):
-        c = encoded_str[i]
+        c = chr(encoded_str[i])
         if c == chr(27):
             if buf:
                 # We have some characters, apply attributes and write them out
@@ -242,11 +243,11 @@ def remove_escape_sequences(s):
     
     """
     from pycmd_public import color
-    escape_sequences_fore = [v for (k, v) in color.Fore.__dict__.items() + color.Back.__dict__.items()
+    escape_sequences_fore = [v for (k, v) in list(color.Fore.__dict__.items()) + list(color.Back.__dict__.items())
                              if not k in ['__dict__', '__doc__', '__weakref__', '__module__']]
-    return reduce(lambda x, y: x.replace(y, ''), 
-                  escape_sequences_fore,
-                  s)
+    return functools.reduce(lambda x, y: x.replace(y, ''), 
+                       escape_sequences_fore,
+                       s)
 
 def get_current_foreground():
     """Get the current foreground setting as a color string"""

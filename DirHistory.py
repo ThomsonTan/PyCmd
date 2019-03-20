@@ -53,7 +53,7 @@ class DirHistory:
         try:
             os.chdir(self.locations[self.index])
             changed = True
-        except OSError, error:
+        except(OSError, error):
             stdout.write('\n  ' + str(error) + '\n')
             self.locations.pop(self.index) 
             self.index -= 1
@@ -67,7 +67,7 @@ class DirHistory:
     # or there would be flickering?
     def visit_cwd(self):
         """Add the current directory to the history of visited locations"""
-        currDir = os.getcwd().decode(sys.getfilesystemencoding())
+        currDir = os.getcwd() #.decode(sys.getfilesystemencoding())
         # self.locations.insert(self.index + 1, currDir)
         # always append the latest one to the last
         self.locations.append(currDir)

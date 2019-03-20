@@ -78,7 +78,7 @@ class InputState:
 
         self.open_app = os.path.expandvars("%PYCMD_OPEN_APP%")
         if '%' in self.open_app:
-            print '%PYCMD_OPEN_APP% is not defined!'
+            print('%PYCMD_OPEN_APP% is not defined!')
             self.open_app = ''
 
         self.user32_dll = ctypes.windll.user32
@@ -385,7 +385,6 @@ class InputState:
         hwnd = ctypes.wintypes.HWND(0)
         self.user32_dll.OpenClipboard(hwnd);
         self.user32_dll.EmptyClipboard();
-        print self.get_selection()
         self.user32_dll.SetClipboardData(1, self.get_selection()) # 1 is CF_TEXT
         self.user32_dll.CloseClipboard();
         self.history.reset()

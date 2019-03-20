@@ -1,7 +1,7 @@
 #
 # Common utility functions
 #
-import os, string, fsm, _winreg, pefile, mmap, sys, traceback
+import os, string, fsm, winreg, pefile, mmap, sys, traceback
 import re
 import pycmd_public
 
@@ -50,7 +50,7 @@ def parse_line(line):
 
     def error(fsm):
         """Action: handle uncovered transition (should never happen)."""
-        print 'Unhandled transition:', (fsm.input_symbol, fsm.current_state)
+        print('Unhandled transition:', (fsm.input_symbol, fsm.current_state))
         accumulate(fsm)
 
     f = fsm.FSM('init', [''])
@@ -261,15 +261,15 @@ def associated_application(ext):
     extension.
     """
     try:
-        file_class = _winreg.QueryValue(_winreg.HKEY_CLASSES_ROOT, ext) or ext
-        action = _winreg.QueryValue(_winreg.HKEY_CLASSES_ROOT, file_class + '\\shell') or 'open'
-        assoc_key = _winreg.OpenKey(_winreg.HKEY_CLASSES_ROOT, 
+        file_class = winreg.QueryValue(winreg.HKEY_CLASSES_ROOT, ext) or ext
+        action = winreg.QueryValue(winreg.HKEY_CLASSES_ROOT, file_class + '\\shell') or 'open'
+        assoc_key = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, 
                                     file_class + '\\shell\\' + action + '\\command')
-        open_command = _winreg.QueryValueEx(assoc_key, None)[0]
+        open_command = winreg.QueryValueEx(assoc_key, None)[0]
         
         # We assume a value `similar to '<command> %1 %2'
         return expand_env_vars(parse_line(open_command)[0])
-    except WindowsError, e:
+    except(WindowsError, e):
         return None
 
 
@@ -283,7 +283,7 @@ def full_executable_path(app_unicode):
     # Split the app into a dir, a name and an extension; we
     # will configure our search for the actual executable based
     # on these
-    dir, file = os.path.split(app.strip('"'))
+    dir, file = os.path.split(app.strip(b'"'))
     name, ext = os.path.splitext(file)
 
     # Determine possible executable extension
@@ -302,7 +302,7 @@ def full_executable_path(app_unicode):
     # print 'D:', paths_to_search, 'N:', name, 'E:', extensions_to_search
     for p in paths_to_search:
         for e in extensions_to_search:
-            full_path = os.path.join(p, name) + e
+            full_path = os.path.join(p.encode(), name) + e
             if os.path.exists(full_path):
                 return full_path
 
@@ -327,13 +327,13 @@ def is_gui_application(executable):
             if pefile.SUBSYSTEM_TYPE[pe.OPTIONAL_HEADER.Subsystem] == 'IMAGE_SUBSYSTEM_WINDOWS_GUI':
                 # We only return true if all went well
                 result = True
-        except pefile.PEFormatError, e:
+        except(pefile.PEFormatError, e):
             # There's not much we can do if pefile fails
             pass
 
         m.close()
         os.close(fd)
-    except Exception, e:
+    except(Exception, e):
         # Not much we can do for exceptions
         pass
 
@@ -350,9 +350,9 @@ def apply_settings(settings_file):
             # We initialize the dictionary to readily contain the settings
             # structures; anything else needs to be explicitly imported
             execfile(settings_file, pycmd_public.__dict__)
-        except Exception, e:
-            print 'Error encountered when loading ' + settings_file
-            print 'Subsequent settings will NOT be applied!'
+        except(Exception, e):
+            print('Error encountered when loading ' + settings_file)
+            print('Subsequent settings will NOT be applied!')
             traceback.print_exc()
 
 def sanitize_settings():

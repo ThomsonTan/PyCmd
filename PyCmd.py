@@ -152,14 +152,16 @@ def main():
 
     if not behavior.quiet_mode:
         # Print some splash text
-        try:
-            from buildinfo import build_info
-        except ImportError, ie:
-            build_info = '<no build info>'
+        #try:
+        #    #from buildinfo import build_info
+        #except (ImportError, ie):
+        #    build_info = '<no build info>'
+        build_info = '<no build info>'
 
-        print
-        print 'Welcome to PyCmd %s!' % build_info
-        print
+
+        print()
+        print('Welcome to PyCmd %s!' % build_info)
+        print()
 
     # Run an empty command to initialize environment
     run_command(['echo', '>', 'NUL'])
@@ -192,7 +194,7 @@ def main():
             curdir = os.getcwd()
             curdir = curdir[0].upper() + curdir[1:]
             # console.set_console_title(title_prefix + curdir + ' - PyCmd')
-            console.set_console_title(title_prefix + ' - PyCmd')
+            console.set_console_title(title_prefix + b' - PyCmd')
             os.environ['CD'] = curdir
 
             if state.changed() or force_repaint:
@@ -714,7 +716,7 @@ def main():
             try:
                 IPython = __import__('IPython')
                 IPython.embed(banner1='')
-            except Exception, e:
+            except (Exception, e):
                 print("Missing IPython")
             #run_command([u'c:\\python27\\python.exe', u'-c', u'"import IPython;IPython.embed(banner1=\'\')"'])
             continue
@@ -760,7 +762,7 @@ def l(file_name = consoleScriptFileName):
 
 def e(file_name = consoleScriptFileName, clearContent = False):
     if len(state.open_app) == 0:
-        print "%PYCMD_OPEN_APP% is not configured"
+        print("%PYCMD_OPEN_APP% is not configured")
         return
 
     pycmd_tmp_dir = pycmd_data_dir + '\\tmp'
@@ -785,13 +787,13 @@ def e(file_name = consoleScriptFileName, clearContent = False):
             # file content is cleared upon call to fileinput.input
             for cmdScLine in fileinput.input(pycmd_tmp_script_file, inplace=1):
                 if isFirstLine:
-                    print scHeaderLine
+                    print(scHeaderLine)
                     isFirstLine = False
 
                     if not cmdScLine.startswith('#PyConSc '):
-                        print cmdScLine,
+                        print(cmdScLine,)
                 else:
-                    print cmdScLine,
+                    print(cmdScLine,end='')
         # only updates console hwnd, keeps last position
         os.system(openEditCmdLine)
 
@@ -835,7 +837,7 @@ def internal_cd(args):
                 target = target.rstrip(u'\\')
             target = expand_env_vars(target.strip(u'"').strip(u' '))
             os.chdir(target.encode(sys.getfilesystemencoding()))
-    except OSError, error:
+    except(OSError, error):
         stdout.write(u'\n' + str(error).replace('\\\\', '\\').decode(sys.getfilesystemencoding()))
     os.environ['CD'] = os.getcwd()
 
@@ -844,7 +846,7 @@ def internal_exit(message = ''):
     """The EXIT command, with an optional goodbye message"""
     deinit()
     if ((not behavior.quiet_mode) and message != ''):
-        print message
+        print(message)
     sys.exit()
 
 
@@ -943,7 +945,7 @@ def run_in_cmd(tokens):
             command += u' & echo ' + var + u'="%' + var + u'%" >> "' + tmpfile + '"'
         command += u'& <nul (set /p xxx=CD=) >>"' + tmpfile + u'" & cd >>"' + tmpfile + '"'
         command += u'"'
-        os.system(command.encode(sys.getfilesystemencoding()))
+        os.system(command) #.encode(sys.getfilesystemencoding()))
 
     # Update environment and state
     new_environ = {}
@@ -962,7 +964,7 @@ def run_in_cmd(tokens):
                 del os.environ[variable]
         for variable in new_environ:
             os.environ[variable] = new_environ[variable]
-    cd = os.environ['CD'].decode(stdout.encoding)
+    cd = os.environ['CD'] # .decode(stdout.encoding)
     os.chdir(cd.encode(sys.getfilesystemencoding()))
 
 
@@ -1042,25 +1044,25 @@ def read_history(filename):
         history = [remove_tail_datetime(line.rstrip(u'\n\r')) for line in history_file.readlines()]
         history_file.close()
     else:
-        print 'Warning: Can\'t open ' + os.path.basename(filename) + '!'
+        print('Warning: Can\'t open ' + os.path.basename(filename) + '!')
         history = []
     return history
 
 
 def print_usage():
     """Print usage information"""
-    print 'Usage:'
-    print '\t PyCmd [-i script] [-t title] ( [-c command] | [-k command] | [-h] )'
-    print
-    print '\t\t-c command \tRun command, then exit'
-    print '\t\t-k command \tRun command, then continue to the prompt'
-    print '\t\t-t title \tShow title in window caption'
-    print '\t\t-i script \tRun additional init/config script'
-    print '\t\t-q\t\tQuiet (suppress messages)'
-    print '\t\t-h \t\tShow this help'
-    print
-    print 'Note that you can use \'/\' instead of \'-\', uppercase instead of '
-    print 'lowercase and \'/?\' instead of \'-h\''
+    print('Usage:')
+    print('\t PyCmd [-i script] [-t title] ( [-c command] | [-k command] | [-h] )')
+    print()
+    print('\t\t-c command \tRun command, then exit')
+    print('\t\t-k command \tRun command, then continue to the prompt')
+    print('\t\t-t title \tShow title in window caption')
+    print('\t\t-i script \tRun additional init/config script')
+    print('\t\t-q\t\tQuiet (suppress messages)')
+    print('\t\t-h \t\tShow this help')
+    print()
+    print('Note that you can use \'/\' instead of \'-\', uppercase instead of ')
+    print('lowercase and \'/?\' instead of \'-h\'')
 
 
 # Entry point
@@ -1068,22 +1070,22 @@ if __name__ == '__main__':
     try:
         init()
         main()
-    except Exception, e:        
+    except (Exception, e):        
         report_file_name = (pycmd_data_dir
                             + '\\crash-' 
                             + time.strftime('%Y%m%d_%H%M%S') 
                             + '.log')
-        print '\n'
-        print '************************************'
-        print 'PyCmd has encountered a fatal error!'
-        print
+        print('\n')
+        print('************************************')
+        print('PyCmd has encountered a fatal error!')
+        print()
         report_file = open(report_file_name, 'w')
         traceback.print_exc(file=report_file)
         report_file.close()
         traceback.print_exc()
-        print 
-        print 'Crash report written to:\n  ' + report_file_name
-        print
-        print 'Press any key to exit... '
-        print '************************************'
+        print() 
+        print('Crash report written to:\n  ' + report_file_name)
+        print()
+        print('Press any key to exit... ')
+        print('************************************')
         read_input()

@@ -22,10 +22,10 @@ def abbrev_path(path = None):
     underscore_separation or "whitespace separation".
     """
     if not path:
-        path = os.getcwd().decode(sys.getfilesystemencoding())
+        path = os.getcwd() # .decode(sys.getfilesystemencoding())
         path = path[0].upper() + path[1:]
         return path
-	current_dir = path[ : 3]
+        current_dir = path[ : 3]
     path = path[3 : ]
     path_abbrev = current_dir[ : 2]
 
@@ -171,7 +171,7 @@ class _Appearance(_Settings):
 
     def sanitize(self):
         if not callable(self.prompt):
-            print 'Prompt function doesn\'t look like a callable; reverting to PyCmd\'s default prompt'
+            print('Prompt function doesn\'t look like a callable; reverting to PyCmd\'s default prompt')
             self.prompt = abbrev_path_prompt
 
 
@@ -187,7 +187,7 @@ class Behavior(_Settings):
 
     def sanitize(self):
         if not self.completion_mode in ['bash']:
-            print 'Invalid setting "' + self.completion_mode + '" for "completion_mode" -- using default "bash"'
+            print('Invalid setting "' + self.completion_mode + '" for "completion_mode" -- using default "bash"')
             self.completion_mode = 'bash'
 
 
