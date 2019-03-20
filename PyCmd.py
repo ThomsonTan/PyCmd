@@ -593,24 +593,24 @@ def main():
                             
                         stdout.write('\n')
                         num_col_could_choose = num_lines # num_lines > 0
-                        num_item_could_choose = len(string.lowercase)
+                        num_item_could_choose = len(string.ascii_lowercase)
                         while num_col_could_choose < num_item_could_choose :
                             num_col_could_choose = num_col_could_choose + num_lines
                         
                         num_col_could_choose = (num_col_could_choose + num_lines - 1) / num_lines
                             
                         
-                        for line in range(0, num_lines):
+                        for line in range(0, int(num_lines)):
                             # Print one line
                             stdout.write('\r')
                             for column in range(0, num_columns):
                                 if line + column * num_lines < len(suggestions):
-                                    suggestion_id = line + column * num_lines
+                                    suggestion_id = int(line + column * num_lines)
                                     s = suggestions[suggestion_id]
                                     
                                     suggestion_prefix = ''
                                     if suggestion_id < num_item_could_choose :
-                                        suggestion_prefix = string.lowercase[suggestion_id]+': '
+                                        suggestion_prefix = string.ascii_lowercase[suggestion_id]+': '
                                     elif column < num_col_could_choose :
                                         suggestion_prefix = '   '
                                     else :
@@ -656,10 +656,10 @@ def main():
                         stdout.write(' ' * len(message))
                         move_cursor(c_x, console.get_buffer_size()[1] - offset_from_bottom)                        
                         #stdout.write('\n ')
-                        if rec.Char.isalpha() and string.lowercase.index(rec.Char) < len(suggestions):
+                        if rec.Char.isalpha() and string.ascii_lowercase.index(rec.Char) < len(suggestions):
                             # Don't append a space to end since it could be a foder end with '\',
                             # and completion could continue
-                            suggest_item = suggestions[string.lowercase.index(rec.Char)]
+                            suggest_item = suggestions[string.ascii_lowercase.index(rec.Char)]
                             
                             # if suggest_item has space inside
                             if suggest_item.find(' ') != -1 and tokens[-1][0] != '"':
@@ -916,6 +916,7 @@ def run_command(tokens):
             flashwinfo.count = 3
             flashwinfo.Timeout = 750
             ctypes.windll.user32.FlashWindowEx(ctypes.byref(flashwinfo))
+    stdout.write('\n') # Why needed for Python3?
 
 def run_in_cmd(tokens):
     pseudo_vars = ['CD', 'DATE', 'ERRORLEVEL', 'RANDOM', 'TIME']
