@@ -433,11 +433,11 @@ class InputState:
                 text = ctypes.c_char_p(pcontents).value
 
             #Purge garbage chars that some apps put in the clipboard
-            if text.find('\0') >= 0:
+            if text.find(b'\0') >= 0:
                 text = text[:text.find('\0')]
 
             if len(text) > 0:
-                os.system("cmd.exe /c" + self.open_app + " " + text)
+                os.system("cmd.exe /c" + self.open_app + " " + text.decode())
         self.user32_dll.CloseClipboard();
 
     def key_insert(self, text):
