@@ -569,7 +569,7 @@ def main():
                             column_width = console.get_buffer_size()[0] - 1
                         if len(suggestions) > (get_viewport()[3] - get_viewport()[1]) / 4:
                             # We print multiple columns to save space
-                            num_columns = int((console.get_buffer_size()[0] - 1) / column_width)
+                            num_columns = (console.get_buffer_size()[0] - 1) // column_width
                         else:
                             # We print a single column for clarity
                             num_columns = 1
