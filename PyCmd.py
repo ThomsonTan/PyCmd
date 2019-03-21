@@ -188,7 +188,7 @@ def main():
         force_repaint = True
         dir_hist.shown = False
         if no_new_prompt == False:
-            print
+            stdout.write('\n')
         else:
             no_new_prompt = False
 
@@ -727,7 +727,7 @@ def main():
                 #IPythonConfig = traitles.config.get_config()
                 #IPythonConfig.InteractiveShellEmbed.color = "Linux"
                 IPython.embed(banner1='', config=c)
-            except Exception as e:
+            except Exception as ex:
                 print("Missing IPython")
             #run_command([u'c:\\python27\\python.exe', u'-c', u'"import IPython;IPython.embed(banner1=\'\')"'])
             continue
@@ -736,8 +736,19 @@ def main():
         else:
             if tokens[0] == u'gv':
                 no_new_prompt = True
+            elif len(tokens)== 1 and tokens[0] in [u'n', u'e', u'l']:
+                global n, e, l
+                cmd_func = {u'n':n, u'e':e, u'l':l}
+                if tokens[0] == u'l':
+                    # evaluate script after new line
+                    stdout.write('\n')
+                try:
+                    cmd_func[tokens[0]]()
+                except Exception as ex:
+                    print("Got exception: " + str(ex))
+                continue
             if no_new_prompt == False:
-                print
+                stdout.write('\n')
             if tokens[0] == u's':
                 tokens[0] = u'start'
                 if len(tokens) == 2:
@@ -769,7 +780,7 @@ consoleScriptFileName = "pycmd_script.py"
 def l(file_name = consoleScriptFileName):
     pycmd_tmp_dir = pycmd_data_dir + '\\tmp'
     pycmd_tmp_script_file = pycmd_tmp_dir + '\\' + file_name
-    execfile(pycmd_tmp_script_file, globals())
+    exec(open(pycmd_tmp_script_file).read(), globals())
 
 def e(file_name = consoleScriptFileName, clearContent = False):
     if len(state.open_app) == 0:
@@ -863,7 +874,6 @@ def internal_exit(message = ''):
 
 def run_command(tokens):
     """Execute a command line (treat internal and external appropriately"""
-    stdout.write('\n') # Why needed for Python3?
     if tokens[0] == 'exit':
         internal_exit('Bye!')
     elif tokens[0].lower() == 'cd' and [t for t in tokens if t in sep_tokens] == []:
@@ -916,7 +926,6 @@ def run_command(tokens):
             flashwinfo.count = 3
             flashwinfo.Timeout = 750
             ctypes.windll.user32.FlashWindowEx(ctypes.byref(flashwinfo))
-    stdout.write('\n') # Why needed for Python3?
 
 def run_in_cmd(tokens):
     pseudo_vars = ['CD', 'DATE', 'ERRORLEVEL', 'RANDOM', 'TIME']
@@ -940,7 +949,7 @@ def run_in_cmd(tokens):
         # The syntax of the command is incorrect, cmd would refuse to execute it
         # altogether; in order to we replicate the error message, we run a simple
         # invalid command and return
-        print
+        stdout.write('\n')
         os.system('echo |')
         return
 
