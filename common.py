@@ -302,7 +302,9 @@ def full_executable_path(app_unicode):
     # print 'D:', paths_to_search, 'N:', name, 'E:', extensions_to_search
     for p in paths_to_search:
         for e in extensions_to_search:
-            full_path = os.path.join(p.encode(), name) + e
+            if type(p) == str:
+                p = p.encode('utf-8')
+            full_path = os.path.join(p, name) + e
             if os.path.exists(full_path):
                 return full_path
 
