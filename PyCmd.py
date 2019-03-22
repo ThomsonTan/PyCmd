@@ -1097,7 +1097,7 @@ if __name__ == '__main__':
                             + '\\crash-' 
                             + time.strftime('%Y%m%d_%H%M%S') 
                             + '.log')
-        print('\n')
+        print()
         print('************************************')
         print('PyCmd has encountered a fatal error!')
         print()
