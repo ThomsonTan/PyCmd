@@ -403,16 +403,16 @@ class InputState:
             return
             
         # Purge garbage chars that some apps put in the clipboard
-        if text.find('\0') >= 0:
-            text = text[:text.find('\0')]
+        if text.find(b'\0') >= 0:
+            text = text[:text.find(b'\0')]
 
         # Convert newlines to blanks
-        text = text.replace('\r', '').replace('\n', ' ')
+        text = text.replace(b'\r', b'').replace(b'\n', b' ')
 
         # Insert into command line
         if self.get_selection() != '':
             self.delete_selection()
-        self.before_cursor = self.before_cursor + text
+        self.before_cursor = self.before_cursor + text.decode()
         self.reset_selection()
         self.history.reset()
 
