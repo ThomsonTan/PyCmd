@@ -145,7 +145,7 @@ class DirHistory:
         """
         (buf_width, buf_height) = get_buffer_size()
         (cur_x, cur_y) = get_cursor()
-        lines_written = len(line) / buf_width + 1
+        lines_written = len(line) // buf_width + 1
         if cur_y + lines_written > buf_height:
             self.offset_from_bottom += cur_y + lines_written - buf_height
 
