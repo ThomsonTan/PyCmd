@@ -118,7 +118,7 @@ class DirHistory:
         for i in range(len(self.locations)):
             location = self.locations[i]
             prefix = ' %d  ' % (i + 1)
-            lines_written += (len(prefix + location) / buffer_size[0] + 1)
+            lines_written += (len(prefix + location) // buffer_size[0] + 1)
             if i != self.index:
                 # Non-selected entry, simply print 
                 stdout.write(prefix + location + '\n')
