@@ -700,13 +700,13 @@ def main():
             cmdFile = open(cmdLineFilePath, 'wb')
             # if no content in command line, write clipboard text to the temporary file
             if tokens == [] or tokens[0] == '':
-                write_str = PyCmdUtils.GetClipboardText()
-                if len(write_str) == 0:
+                write_str_bytes = PyCmdUtils.GetClipboardText()
+                if len(write_str_bytes) == 0:
                     continue
                 cmdLineFilePathWithLine += '?$' # nav to the last line
             else:
-                write_str = ' '.join(tokens)
-            cmdFile.write(write_str)
+                write_str_bytes = ' '.join(tokens).encode('utf-8')
+            cmdFile.write(write_str_bytes)
             cmdFile.close()
             os.system(state.open_app + ' ' + cmdLineFilePathWithLine)
             edit_cmd_line = False
