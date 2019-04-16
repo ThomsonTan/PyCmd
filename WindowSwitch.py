@@ -118,7 +118,7 @@ def list_and_switch():
         else:
             color_str_cmd = color.Fore.GREEN + color.Fore.CLEAR_BRIGHT
             color_str_pwd = color.Fore.GREEN + color.Fore.SET_BRIGHT
-        sys.stdout.write(curr_index_char + ': ' + color_str_pwd + pwd + color_str_cmd + cmd + '\n')
+        sys.stdout.write(color_str_pwd + curr_index_char + ': ' + pwd + color_str_cmd + cmd + '\n')
 
     if index == 0:
         return
