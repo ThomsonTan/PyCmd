@@ -27,11 +27,19 @@ def init():
     pycmd_data_dir = expand_env_vars(APPDATA + '\\PyCmd')
     winstate_full_path = os.path.join(pycmd_data_dir, windows_state_path)
 
+    if not os.path.exists(winstate_full_path):
+        open(winstate_full_path, 'a').close()
+
 def update_window_state(hwnd, pwd = '', cmd = '', remove_hwnd_list=[]):
     """Update status for given hwnd"""
     
     pwd = pwd.strip()
     cmd = cmd.strip()
+    remove_hwnd = len(pwd) == 0 and len(cmd) == 0
+
+    if not remove_hwnd and len(pwd) == 0:
+        pwd = os.getcwd()
+
     with open(winstate_full_path, 'r+') as f:
         winstate = f.readlines()
         f.seek(0)
@@ -43,18 +51,14 @@ def update_window_state(hwnd, pwd = '', cmd = '', remove_hwnd_list=[]):
                 continue
             if not line.startswith(str(hwnd)):
                 f.write(line)
-            elif cmd != '' or pwd != '':
+            elif not remove_hwnd:
                 if len(stats) != 3:
-                    print("Warning: unsupported line for windows switch ", line)
-                
+                    print("Warning: unsupported line for windows switch", line)
                 if len(cmd) == 0:
                     cmd = stats[2]
-                elif len(pwd) == 0 and len(stats[1]) == 0:
-                    pwd = os.getcwd()
-                if len(pwd) == 0:
-                    pwd = stats[1]
-        new_line = winstate_separator.join([str(hwnd), pwd, cmd]) + '\n'
-        f.write(new_line)
+        if not remove_hwnd:
+            new_line = winstate_separator.join([str(hwnd), pwd, cmd]) + '\n'
+            f.write(new_line)
         f.truncate()
 
 def list_and_switch():
