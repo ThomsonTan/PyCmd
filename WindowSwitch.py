@@ -67,8 +67,7 @@ def list_and_switch():
         winstate = f.readlines()
     winstate.reverse()
 
-    sys.stdout.write('\n\n')
-
+    first_line = True
     index = 0
     orig_index = -1
     index_map = []
@@ -100,6 +99,10 @@ def list_and_switch():
         if len(output_line) > columns:
             output_line = output_line[0: columns - 3] + '...'
 
+
+        if first_line:
+            sys.stdout.write('\n\n')
+            first_line = False
 
         sys.stdout.write(curr_index_char + ': ' + output_line + '\n')
 
