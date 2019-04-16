@@ -27,11 +27,17 @@ def init():
     pycmd_data_dir = expand_env_vars(APPDATA + '\\PyCmd')
     winstate_full_path = os.path.join(pycmd_data_dir, windows_state_path)
 
+    if not os.path.exists(winstate_full_path):
+        open(winstate_full_path, 'w').close()
+
 def update_window_state(hwnd, pwd = '', cmd = '', remove_hwnd_list=[]):
     """Update status for given hwnd"""
     
     pwd = pwd.strip()
     cmd = cmd.strip()
+    remove_hwnd = len(pwd) == 0 and len(cmd) == 0
+    if not remove_hwnd and len(pwd) == 0:
+        pwd = os.getcwd()
     with open(winstate_full_path, 'r+') as f:
         winstate = f.readlines()
         f.seek(0)
@@ -49,12 +55,9 @@ def update_window_state(hwnd, pwd = '', cmd = '', remove_hwnd_list=[]):
                 
                 if len(cmd) == 0:
                     cmd = stats[2]
-                elif len(pwd) == 0 and len(stats[1]) == 0:
-                    pwd = os.getcwd()
-                if len(pwd) == 0:
-                    pwd = stats[1]
-        new_line = winstate_separator.join([str(hwnd), pwd, cmd]) + '\n'
-        f.write(new_line)
+        if not remove_hwnd:
+            new_line = winstate_separator.join([str(hwnd), pwd, cmd]) + '\n'
+            f.write(new_line)
         f.truncate()
 
 def list_and_switch():
@@ -69,7 +72,7 @@ def list_and_switch():
     orig_index = -1
     index_map = []
     remove_hwnd_list = []
-    columns = console.get_buffer_size()[0] - 6
+    columns = console.get_buffer_size()[0] - 3
     currHwnd = py_GetConsoleWindow()
 
     for line in winstate:
@@ -91,15 +94,15 @@ def list_and_switch():
         index_map.append(orig_index)
         pwd = states[1].strip()
         cmd = states[2].strip()
-        output_line = ''
-        if len(pwd) + len(cmd) > columns:
-            if len(pwd) > columns:
-                output_line = pwd[0:columns-3] + '...'
 
         output_line = pwd + '> ' + cmd
+        if len(output_line) > columns:
+            output_line = output_line[0: columns - 3] + '...'
 
         sys.stdout.write(curr_index_char + ': ' + output_line + '\n')
 
+    if index == 0:
+        return
     sys.stdout.write('\n')
     message = ' Press a-z to switch to target PyCmd, space to ignore: '
     sys.stdout.write(message)
