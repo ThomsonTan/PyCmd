@@ -46,6 +46,8 @@ def update_window_state(hwnd, pwd = '', cmd = '', remove_hwnd_list=[]):
 
         for line in winstate:
             stats = line.split(winstate_separator)
+            if len(stats) != 3:
+                continue
             if int(stats[0]) in remove_hwnd_list:
                 # remove invalid line
                 continue
@@ -80,7 +82,7 @@ def list_and_switch():
         states = line.split(winstate_separator)
         if len(states) != 3:
             print("Warning: unsupported line for windows switch: ", line)
-            return
+            continue
 
         hwnd  = int(states[0])
         if hwnd == currHwnd:

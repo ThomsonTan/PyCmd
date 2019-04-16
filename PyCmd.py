@@ -862,8 +862,8 @@ def internal_cd(args):
                 target = target.rstrip(u'\\')
             target = expand_env_vars(target.strip(u'"').strip(u' '))
             to_dir = target.encode(sys.getfilesystemencoding())
-        os.chdir(cd_to_dir)
-        WindowSwitch.update_window_state(py_GetConsoleWindow(), to_dir, '')
+        os.chdir(to_dir)
+        WindowSwitch.update_window_state(py_GetConsoleWindow(), to_dir.decode(), '')
     except OSError as error:
         stdout.write(u'\n' + str(error).replace('\\\\', '\\').decode(sys.getfilesystemencoding()))
     os.environ['CD'] = os.getcwd()
