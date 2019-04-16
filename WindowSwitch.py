@@ -104,6 +104,8 @@ def list_and_switch():
 
         sys.stdout.write(curr_index_char + ': ' + output_line + '\n')
 
+    if index == 0:
+        return
     sys.stdout.write('\n')
     message = ' Press a-z to switch to target PyCmd, space to ignore: '
     sys.stdout.write(message)
