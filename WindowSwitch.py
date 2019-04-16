@@ -1,6 +1,7 @@
 import os, console, sys, ctypes
 from common import expand_env_vars
 import PyCmdUtils
+from pycmd_public import color
 
 windows_state_path = 'win_stat.txt'
 winstate_separator = '^$^'
@@ -95,23 +96,33 @@ def list_and_switch():
         curr_index_char = chr(ord('a') + index)
         index += 1
         index_map.append(orig_index)
-        pwd = states[1].strip()
+        pwd = states[1].strip() + '> '
         cmd = states[2].strip()
 
-        output_line = pwd + '> ' + cmd
-        if len(output_line) > columns:
-            output_line = output_line[0: columns - 3] + '...'
-
+        if len(pwd) > columns:
+            pwd = pwd[0: column - 5] + '...> '
+            cmd = ''
+        else:
+            left_columns = columns - len(pwd)
+            if len(cmd) > left_columns:
+                if left_columns >= 3:
+                    cmd = cmd[0:left_columns - 3] + '...'
 
         if first_line:
             sys.stdout.write('\n\n')
             first_line = False
 
-        sys.stdout.write(curr_index_char + ': ' + output_line + '\n')
+        if index % 2 == 0:
+            color_str_cmd = color.Fore.RED + color.Fore.CLEAR_BRIGHT
+            color_str_pwd = color.Fore.RED + color.Fore.SET_BRIGHT
+        else:
+            color_str_cmd = color.Fore.GREEN + color.Fore.CLEAR_BRIGHT
+            color_str_pwd = color.Fore.GREEN + color.Fore.SET_BRIGHT
+        sys.stdout.write(curr_index_char + ': ' + color_str_pwd + pwd + color_str_cmd + cmd + '\n')
 
     if index == 0:
         return
-    sys.stdout.write('\n')
+    sys.stdout.write(color.Fore.DEFAULT + '\n')
     message = ' Press a-z to switch to target PyCmd, space to ignore: '
     sys.stdout.write(message)
 
