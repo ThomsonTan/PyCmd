@@ -73,7 +73,7 @@ def list_and_switch():
     orig_index = -1
     index_map = []
     remove_hwnd_list = []
-    columns = console.get_buffer_size()[0] - 6
+    columns = console.get_buffer_size()[0] - 3
     currHwnd = py_GetConsoleWindow()
 
     for line in winstate:
@@ -95,12 +95,11 @@ def list_and_switch():
         index_map.append(orig_index)
         pwd = states[1].strip()
         cmd = states[2].strip()
-        output_line = ''
-        if len(pwd) + len(cmd) > columns:
-            if len(pwd) > columns:
-                output_line = pwd[0:columns-3] + '...'
 
         output_line = pwd + '> ' + cmd
+        if len(output_line) > columns:
+            output_line = output_line[0: columns - 3] + '...'
+
 
         sys.stdout.write(curr_index_char + ': ' + output_line + '\n')
 
