@@ -52,8 +52,11 @@ def ConnectWithGVim():
 
 def SwitchToGVim():
     if GVim_hwnd != 0:
-        user32.ShowWindow(GVim_hwnd, 5) # SW_SHOW
-        user32.SetForegroundWindow(GVim_hwnd)
+        SwitchToHwnd(GVim_hwnd)
+
+def SwitchToHwnd(hwnd):
+    user32.ShowWindow(hwnd, 5) # SW_SHOW
+    user32.SetForegroundWindow(hwnd)
 
 def GetClipboardText():
     text = ''
