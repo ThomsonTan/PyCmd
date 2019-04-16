@@ -24,6 +24,7 @@ import string
 import datetime
 
 import PyCmdUtils
+import WindowSwitch
 
 pycmd_data_dir = None
 pycmd_install_dir = None
@@ -455,6 +456,8 @@ def main():
                         state.handle(ActionCode.ACTION_DELETE_WORD) 
                 elif rec.VirtualKeyCode == 82:          # Alt-R
                     state.handle(ActionCode.ACTION_BACKSPACE_WORD, sep_chars)
+                elif rec.VirtualKeyCode == 83:           # Alt-S
+                    WindowSwitch.list_and_switch()
                 elif rec.VirtualKeyCode == 84:          # Alt-T
                     state.handle(ActionCode.ACTION_DELETE_WORD, sep_chars)
                 elif rec.VirtualKeyCode == 85:          # Alt-U
@@ -852,13 +855,15 @@ def internal_cd(args):
     """The internal CD command"""
     try:
         if len(args) == 0:
-            os.chdir(expand_env_vars('~'))
+            to_dir = expand_env_vars('~')
         else:
             target = args[0]
             if target != u'\\' and target[1:] != u':\\':
                 target = target.rstrip(u'\\')
             target = expand_env_vars(target.strip(u'"').strip(u' '))
-            os.chdir(target.encode(sys.getfilesystemencoding()))
+            to_dir = target.encode(sys.getfilesystemencoding())
+        os.chdir(cd_to_dir)
+        WindowSwitch.update_window_state(py_GetConsoleWindow(), to_dir, '')
     except OSError as error:
         stdout.write(u'\n' + str(error).replace('\\\\', '\\').decode(sys.getfilesystemencoding()))
     os.environ['CD'] = os.getcwd()
@@ -867,6 +872,7 @@ def internal_cd(args):
 def internal_exit(message = ''):
     """The EXIT command, with an optional goodbye message"""
     deinit()
+    WindowSwitch.update_window_state(py_GetConsoleWindow(), '', '')
     if ((not behavior.quiet_mode) and message != ''):
         print(message)
     sys.exit()
@@ -880,6 +886,7 @@ def run_command(tokens):
         # This is a single CD command -- use our custom, more handy CD
         internal_cd([unescape(t) for t in tokens[1:]])
     else:
+        WindowSwitch.update_window_state(py_GetConsoleWindow(), '', ' '.join(tokens))
         if set(sep_tokens).intersection(tokens) == set([]):
             # This is a simple (non-compound) command
             # Crude hack so that we return to the prompt when starting GUI
