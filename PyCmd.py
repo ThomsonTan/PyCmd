@@ -863,7 +863,7 @@ def internal_cd(args):
             target = expand_env_vars(target.strip(u'"').strip(u' '))
             to_dir = target.encode(sys.getfilesystemencoding())
         os.chdir(to_dir)
-        WindowSwitch.update_window_state(py_GetConsoleWindow(), to_dir.decode(), '')
+        WindowSwitch.update_window_state(to_dir.decode())
     except OSError as error:
         stdout.write(u'\n' + str(error).replace('\\\\', '\\').decode(sys.getfilesystemencoding()))
     os.environ['CD'] = os.getcwd()
@@ -872,7 +872,7 @@ def internal_cd(args):
 def internal_exit(message = ''):
     """The EXIT command, with an optional goodbye message"""
     deinit()
-    WindowSwitch.update_window_state(py_GetConsoleWindow(), '', '')
+    WindowSwitch.update_window_state('', '')
     if ((not behavior.quiet_mode) and message != ''):
         print(message)
     sys.exit()
@@ -886,7 +886,7 @@ def run_command(tokens):
         # This is a single CD command -- use our custom, more handy CD
         internal_cd([unescape(t) for t in tokens[1:]])
     else:
-        WindowSwitch.update_window_state(py_GetConsoleWindow(), '', ' '.join(tokens))
+        WindowSwitch.update_window_state('', ' '.join(tokens))
         if set(sep_tokens).intersection(tokens) == set([]):
             # This is a simple (non-compound) command
             # Crude hack so that we return to the prompt when starting GUI

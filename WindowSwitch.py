@@ -31,9 +31,11 @@ def init():
     if not os.path.exists(winstate_full_path):
         open(winstate_full_path, 'a').close()
 
-def update_window_state(hwnd, pwd = '', cmd = '', remove_hwnd_list=[]):
+def update_window_state(pwd = '', cmd = '', hwnd = None, remove_hwnd_list=[]):
     """Update status for given hwnd"""
     
+    if hwnd == None:
+        hwnd = py_GetConsoleWindow()
     pwd = pwd.strip()
     cmd = cmd.strip()
     remove_hwnd = len(pwd) == 0 and len(cmd) == 0
@@ -139,6 +141,6 @@ def list_and_switch():
         to_hwnd = int(to_line_list[0])
         PyCmdUtils.SwitchToHwnd(to_hwnd)
 
-        update_window_state(to_hwnd, to_line_list[1], to_line_list[2], remove_hwnd_list)
+        update_window_state(to_line_list[1], to_line_list[2], to_hwnd, remove_hwnd_list)
 
 init()

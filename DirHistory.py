@@ -2,6 +2,7 @@ import os, sys
 from console import get_cursor, move_cursor, get_buffer_size
 from sys import stdout
 from pycmd_public import appearance, color
+import WindowSwitch
 
 class DirHistory:
     """
@@ -51,7 +52,9 @@ class DirHistory:
     def _apply(self):
         """Change to the currently selected directory (checks if still valid)"""
         try:
-            os.chdir(self.locations[self.index])
+            to_dir = self.locations[self.index]
+            os.chdir(to_dir)
+            WindowSwitch.update_window_state(to_dir)
             changed = True
         except OSError as error:
             stdout.write('\n  ' + str(error) + '\n')
