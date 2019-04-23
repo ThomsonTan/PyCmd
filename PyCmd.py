@@ -865,7 +865,7 @@ def internal_cd(args):
         os.chdir(to_dir)
         WindowSwitch.update_window_state(to_dir.decode())
     except OSError as error:
-        stdout.write(u'\n' + str(error).replace('\\\\', '\\').decode(sys.getfilesystemencoding()))
+        stdout.write(u'\n' + str(error).replace('\\\\', '\\'))
     os.environ['CD'] = os.getcwd()
 
 
