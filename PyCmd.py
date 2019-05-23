@@ -750,6 +750,12 @@ def main():
                 except Exception as ex:
                     print("Got exception: " + str(ex))
                 continue
+            elif tokens[0] == u'p':
+                if u' ' in sys.executable:
+                    tokens[0] = '"' + sys.executable + '"'
+                else:
+                    tokens[0] = sys.executable
+
             if no_new_prompt == False:
                 stdout.write('\n')
             if tokens[0] == u's':
