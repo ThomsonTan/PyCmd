@@ -835,15 +835,11 @@ def n(file_name = consoleScriptFileName):
     """clear file console script"""
     e(file_name, True)
 
-def q(name_str, obj=None):
+def q(obj, name_str) :
     """Query the methods in obj which includes name_str"""
-    if obj == None:
-        method_list = dir()
-    else:
-        method_list = dir(obj)
-
-    return [i for i in method_list if name_str in i]
-
+    filtered_list = [i for i in dir(obj) if name_str in i]
+    for i in filtered_list:
+        print(i)
 
 def py_GetConsoleWindow():
     return ctypes.windll.kernel32.GetConsoleWindow()
