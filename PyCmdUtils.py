@@ -27,6 +27,7 @@ memcpy.argtypes = (
     )
 
 user32.SetClipboardData.argtypes = (ctypes.c_uint32, ctypes.c_void_p)
+user32.GetClipboardData.restype = ctypes.c_void_p
 
 def ConnectWithGVim():
     global GVim_hwnd
@@ -79,7 +80,7 @@ def GetClipboardText():
     if user32.IsClipboardFormatAvailable(1): # 1 is CF_TEXT
         data_handle = user32.GetClipboardData(1) # 1 is CF_TEXT
         GlobalLock.restype = ctypes.c_char_p
-        text = GlobalLock(ctypes.c_int(data_handle))
+        text = GlobalLock(ctypes.c_void_p(data_handle))
         GlobalUnlock(data_handle)
     user32.CloseClipboard()
 
