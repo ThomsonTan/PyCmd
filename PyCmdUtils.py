@@ -10,10 +10,23 @@ GHND = (GMEM_MOVEABLE | GMEM_ZEROINIT)
 
 user32 = ctypes.windll.user32
 kernel32 = ctypes.windll.kernel32
+
 GlobalLock = ctypes.windll.kernel32.GlobalLock
-GlobalAlloc = ctypes.windll.kernel32.GlobalAlloc
+GlobalLock.argtypes = (ctypes.c_void_p,)
 GlobalUnlock = ctypes.windll.kernel32.GlobalUnlock
+GlobalUnlock.argtypes = (ctypes.c_void_p,)
+
+GlobalAlloc = ctypes.windll.kernel32.GlobalAlloc
+GlobalAlloc.restype = ctypes.c_void_p
+
 memcpy = ctypes.cdll.msvcrt.memcpy
+memcpy.argtypes = (
+    ctypes.c_void_p,
+    ctypes.c_void_p,
+    ctypes.c_size_t
+    )
+
+user32.SetClipboardData.argtypes = (ctypes.c_uint32, ctypes.c_void_p)
 
 def ConnectWithGVim():
     global GVim_hwnd
