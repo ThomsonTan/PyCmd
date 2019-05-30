@@ -750,7 +750,11 @@ def main():
                 except Exception as ex:
                     print("Got exception: " + str(ex))
                 continue
-            elif tokens[0] == u'p':
+            elif tokens[0] in [u'p', u'pip']:
+                if tokens[0] == u'pip':
+                    tokens.insert(0, u'-m')
+                    tokens.insert(0, None)
+
                 if u' ' in sys.executable:
                     tokens[0] = '"' + sys.executable + '"'
                 else:
