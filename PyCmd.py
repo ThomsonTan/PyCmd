@@ -737,6 +737,7 @@ def main():
         elif tokens[0] == u'cg': # Connect to GVim window
             PyCmdUtils.ConnectWithGVim()
         else:
+            replace_python_cmd = False
             if tokens[0] == u'gv':
                 no_new_prompt = True
             elif len(tokens)== 1 and tokens[0] in [u'n', u'e', u'l']:
@@ -750,11 +751,16 @@ def main():
                 except Exception as ex:
                     print("Got exception: " + str(ex))
                 continue
-            elif tokens[0] in [u'p', u'pip']:
+            elif tokens[0] in [u'p', u'pip'] :
                 if tokens[0] == u'pip':
                     tokens.insert(0, u'-m')
                     tokens.insert(0, None)
+                replace_python_cmd = True
+            elif tokens[0].endswith('.py') or tokens[0].endswith('.py"'):
+                tokens.insert(0, None)
+                replace_python_cmd = True
 
+            if replace_python_cmd:
                 if u' ' in sys.executable:
                     tokens[0] = '"' + sys.executable + '"'
                 else:
