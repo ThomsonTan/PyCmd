@@ -719,10 +719,18 @@ def main():
         elif len(tokens) == 1 and tokens[0] == u'i':
             print("")
             try:
+                color_label = 'Linux'
                 import IPython
+                from IPython.utils import PyColorize, coloransi
+                from IPython.utils.coloransi import TermColors
+                import token as imported_token
+                # the default color LightBlue is not visible in cmd
+                # see the ColorScheme definition in IPython/utils/PyColorize.py
+                PyColorize.ANSICodeColors[color_label].colors[imported_token.STRING] = TermColors.DarkGray
+
                 from traitlets.config import get_config
                 c = get_config()
-                c.InteractiveShellEmbed.colors = "Linux"
+                c.InteractiveShellEmbed.colors = color_label
                 c.InteractiveShellEmbed.confirm_exit = False
                 # Why below commented code doesn't work?
                 #IPython = __import__('IPython')
@@ -731,7 +739,7 @@ def main():
                 #IPythonConfig.InteractiveShellEmbed.color = "Linux"
                 IPython.embed(banner1='', config=c)
             except Exception as ex:
-                print("Missing IPython")
+                print("Missing IPython: ", str(ex))
             #run_command([u'c:\\python27\\python.exe', u'-c', u'"import IPython;IPython.embed(banner1=\'\')"'])
             continue
         elif tokens[0] == u'cg': # Connect to GVim window
