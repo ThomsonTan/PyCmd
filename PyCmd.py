@@ -188,6 +188,7 @@ def main():
         auto_select = False
         force_repaint = True
         dir_hist.shown = False
+        debug_run = False
         if no_new_prompt == False:
             stdout.write('\n')
         else:
@@ -336,6 +337,10 @@ def main():
                 elif rec.VirtualKeyCode == 32:          # Ctrl-Space
                     auto_select = True
                     state.reset_selection()
+                elif rec.VirtualKeyCode == 83:          # Ctrl-S to run under debugger
+                    debug_run = True
+                    state.history.reset()
+                    break
                 elif rec.VirtualKeyCode == 71:          # Ctrl-G
                     state.history.reset()
                     break
@@ -784,6 +789,8 @@ def main():
             elif tokens[0] == u'which':
                 tokens[0] = u'where'
 
+            if debug_run:
+                tokens.insert(0, u'wdt.cmd')
             # Escape / as \ in app path
             tokens[0] = tokens[0].replace('/', '\\')
 
