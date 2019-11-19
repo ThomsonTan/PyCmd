@@ -753,6 +753,11 @@ def main():
             replace_python_cmd = False
             if tokens[0] == u'gv':
                 no_new_prompt = True
+                # TODO: normal path likely file path.
+                if len(tokens) > 1:
+                    for tok_id in range(1, len(tokens)):
+                        tokens[tok_id] = tokens[tok_id].replace('\\\\', '\\')
+
             elif len(tokens)== 1 and tokens[0] in [u'n', u'e', u'l']:
                 global n, e, l
                 cmd_func = {u'n':n, u'e':e, u'l':l}
