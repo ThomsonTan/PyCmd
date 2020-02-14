@@ -790,6 +790,10 @@ def main():
                 tokens[0] = u'start'
                 if len(tokens) == 2:
                     cmd_arg1 = tokens[1].replace('/', '\\')
+                    # assumes it is dir
+                    if os.path.isfile(cmd_arg1):
+                        tokens[0] = u'explorer.exe'
+                        cmd_arg1 = f'/select,"{cmd_arg1}"'
                     tokens[1] = cmd_arg1
             elif tokens[0] == u'which':
                 tokens[0] = u'where'
