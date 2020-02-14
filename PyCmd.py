@@ -797,6 +797,12 @@ def main():
                     tokens[1] = cmd_arg1
             elif tokens[0] == u'which':
                 tokens[0] = u'where'
+            elif tokens[0] == u'cd':
+                if len(tokens) == 2:
+                    cmd_arg1 = tokens[1].replace('/', '\\')
+                    if os.path.isfile(cmd_arg1):
+                        cmd_arg1 = os.path.dirname(cmd_arg1)
+                    tokens[1] = cmd_arg1
 
             if debug_run:
                 tokens.insert(0, u'wdt.cmd')
