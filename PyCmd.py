@@ -803,6 +803,10 @@ def main():
                     if os.path.isfile(cmd_arg1):
                         cmd_arg1 = os.path.dirname(cmd_arg1)
                     tokens[1] = cmd_arg1
+            elif tokens[0] == u'dir':
+                if len(tokens) == 2:
+                    cmd_arg1 = tokens[1].replace('/', '\\')
+                    tokens[1] = cmd_arg1
 
             if debug_run:
                 tokens.insert(0, u'wdt.cmd')
