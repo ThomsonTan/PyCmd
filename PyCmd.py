@@ -802,6 +802,8 @@ def main():
                     cmd_arg1 = tokens[1].replace('/', '\\')
                     if os.path.isfile(cmd_arg1):
                         cmd_arg1 = os.path.dirname(cmd_arg1)
+                        if cmd_arg1 == '':
+                            cmd_arg1 = '.'
                     tokens[1] = cmd_arg1
             elif tokens[0] == u'dir':
                 if len(tokens) == 2:
