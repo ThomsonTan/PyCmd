@@ -436,7 +436,10 @@ class InputState:
             if text.find('\0') >= 0:
                 text = text[:text.find('\0')]
 
-            if len(text) > 0:
+            expanded_text = os.path.expandvars(text)
+            if os.path.isdir(expanded_text):
+                os.system("explorer.exe " + expanded_text)
+            elif len(text) > 0:
                 os.system("cmd.exe /c" + self.open_app + " " + text)
         self.user32_dll.CloseClipboard();
 
