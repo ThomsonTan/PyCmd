@@ -824,7 +824,7 @@ def main():
                     tokens[1] = cmd_arg1
             elif tokens[0] == u'which':
                 tokens[0] = u'where'
-            elif tokens[0] == u'cd':
+            elif tokens[0] == u'cd' or tokens[0] == u'cdd':
                 if len(tokens) == 2:
                     cmd_arg1 = tokens[1].replace('/', '\\')
                     if os.path.isfile(os.path.expandvars(cmd_arg1)):
@@ -832,6 +832,16 @@ def main():
                         if cmd_arg1 == '':
                             cmd_arg1 = '.'
                     tokens[1] = cmd_arg1
+                    dir_hist.push(os.getcwd())
+                elif tokens[0] == u'cdd' and len(tokens) == 1:
+                    pop_dir = dir_hist.pop()
+                    if pop_dir == '':
+                        print('Reached root of dir stack')
+                        continue
+                    tokens.append(pop_dir)
+
+                if tokens[0] == u'cdd':
+                    tokens[0] = u'cd'
             elif tokens[0] == u'dir':
                 if len(tokens) == 2:
                     cmd_arg1 = tokens[1].replace('/', '\\')
@@ -940,7 +950,7 @@ def internal_cd(args):
     """The internal CD command"""
     try:
         if len(args) == 0:
-            to_dir = expand_env_vars('~')
+            to_dir = expand_env_vars('~').encode()
         else:
             target = args[0]
             if target != u'\\' and target[1:] != u':\\':

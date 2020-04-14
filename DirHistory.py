@@ -25,7 +25,19 @@ class DirHistory:
     def __init__(self):
         """Create an empty directory history"""
         self.locations = []
+        self.stack = []
         self.index = -1
+
+    def push(self, dir_name):
+        """Push a given dir to internal stack"""
+        self.stack.append(dir_name.lower())
+
+    def pop(self):
+        """Pop the most recent dir in the stack and return it"""
+        if len(self.stack) > 0:
+            return self.stack.pop()
+        else:
+            return ''
 
     def go_left(self):
         """Go to the previous location (checks whether it's still valid)"""
