@@ -583,9 +583,9 @@ def main():
                             if curr_dir.startswith(sdx_root):
                                 rel_path = curr_dir[len(sdx_root):]
                                 if os.path.isfile('sources'):
-                                    tokens[-1] = os.path.join(obj_root, rel_path, o_path)
+                                    tokens[-1] = os.path.join(obj_root, rel_path, o_path) + '\\'
                                 else:
-                                    tokens[-1] = os.path.join(obj_root, rel_path)
+                                    tokens[-1] = os.path.join(obj_root, rel_path) + '\\'
                                 completed = ' '.join(tokens)
 
 
