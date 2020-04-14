@@ -562,7 +562,7 @@ def main():
                                 tokens[-1] = cmdLineFromFileStrip
                                 completed = cmdLineFromFileStrip
 
-                    # handle expand of $a
+                    # handle expand of $a which is the last arg
                     elif last_token_len == 2 and tokens[-1][0] == '$':
                         suggestions = []
                         completed = ' '
@@ -573,7 +573,8 @@ def main():
                             alt_drive = os.environ['ALT_DRIVE']
                             curr_dir = os.getcwd()
                             if curr_dir[0] != alt_drive:
-                                completed = alt_drive + curr_dir[1:] + '\\'
+                                tokens[-1] = alt_drive + curr_dir[1:] + '\\'
+                                completed = ' '.join(tokens)
                         elif expand_char == 'o' and 'SDXROOT' in os.environ:
                             sdx_root = os.environ['SDXROOT'].lower() + '\\'
                             obj_root = os.environ['OBJECT_ROOT'].lower()
@@ -581,7 +582,8 @@ def main():
                             curr_dir = os.getcwd().lower()
                             if curr_dir.startswith(sdx_root):
                                 rel_path = curr_dir[len(sdx_root):]
-                                completed = os.path.join(obj_root, rel_path, o_path)
+                                tokens[-1] = os.path.join(obj_root, rel_path, o_path)
+                                completed = ' '.join(tokens)
 
 
                     elif tokens[-1].strip('"').count('%') % 2 == 1:
