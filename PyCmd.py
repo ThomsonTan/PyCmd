@@ -833,6 +833,9 @@ def main():
                             cmd_arg1 = '.'
                     tokens[1] = cmd_arg1
                     if tokens[0] == u'cdd':
+                        # show the stack before CD
+                        for dir_rec in dir_hist.get_dir_stack():
+                            print(f'  {dir_rec}')
                         dir_hist.push(os.getcwd())
                 elif tokens[0] == u'cdd' and len(tokens) == 1:
                     pop_dir = dir_hist.pop()
