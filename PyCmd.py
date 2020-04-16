@@ -832,7 +832,8 @@ def main():
                         if cmd_arg1 == '':
                             cmd_arg1 = '.'
                     tokens[1] = cmd_arg1
-                    dir_hist.push(os.getcwd())
+                    if tokens[0] == u'cdd':
+                        dir_hist.push(os.getcwd())
                 elif tokens[0] == u'cdd' and len(tokens) == 1:
                     pop_dir = dir_hist.pop()
                     if pop_dir == '':
