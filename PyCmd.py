@@ -840,6 +840,9 @@ def main():
                         print('Reached root of dir stack')
                         continue
                     tokens.append(pop_dir)
+                    # show the stack before CD
+                    for dir_rec in dir_hist.get_dir_stack():
+                        print(f'  {dir_rec}')
 
                 if tokens[0] == u'cdd':
                     tokens[0] = u'cd'

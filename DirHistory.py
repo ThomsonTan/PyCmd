@@ -39,6 +39,10 @@ class DirHistory:
         else:
             return ''
 
+    def get_dir_stack(self):
+        """Return the internal stack of dirs"""
+        return self.stack
+
     def go_left(self):
         """Go to the previous location (checks whether it's still valid)"""
         self.index -= 1
