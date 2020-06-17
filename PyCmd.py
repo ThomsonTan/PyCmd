@@ -32,6 +32,7 @@ state = None
 dir_hist = None
 tmpfile = None
 resultMapFilePath = None
+create_result_map = True
 cmdLineFilePath = None
 max_cmd_history_lines = 10000
 
@@ -79,6 +80,7 @@ def init():
     global resultMapFilePath
     if 'PYCMD_RESULT_MAP_FILE_PATH' in os.environ:
         resultMapFilePath = os.environ['PYCMD_RESULT_MAP_FILE_PATH']
+        create_result_map = False
     else:
         (handle, resultMapFilePath) = tempfile.mkstemp(dir = pycmd_data_dir + '\\tmp')
         os.close(handle)
@@ -94,8 +96,10 @@ def init():
 
 def deinit():
     os.remove(tmpfile)
-    os.remove(resultMapFilePath)
     os.remove(cmdLineFilePath)
+
+    if create_result_map:
+        os.remove(resultMapFilePath)
 
 def main():
     title_prefix = ""
