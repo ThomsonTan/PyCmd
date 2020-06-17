@@ -77,9 +77,12 @@ def init():
 
     # Create result map file
     global resultMapFilePath
-    (handle, resultMapFilePath) = tempfile.mkstemp(dir = pycmd_data_dir + '\\tmp')
-    os.close(handle)
-    os.environ["PYCMD_RESULT_MAP_FILE_PATH"] = resultMapFilePath
+    if 'PYCMD_RESULT_MAP_FILE_PATH' in os.environ:
+        resultMapFilePath = os.environ['PYCMD_RESULT_MAP_FILE_PATH']
+    else:
+        (handle, resultMapFilePath) = tempfile.mkstemp(dir = pycmd_data_dir + '\\tmp')
+        os.close(handle)
+        os.environ['PYCMD_RESULT_MAP_FILE_PATH'] = resultMapFilePath
 
     # Create command line file
     global cmdLineFilePath
