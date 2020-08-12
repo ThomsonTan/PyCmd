@@ -436,10 +436,15 @@ class InputState:
             if text.find('\0') >= 0:
                 text = text[:text.find('\0')]
 
+            text = text.strip()
             expanded_text = os.path.expandvars(text)
             if os.path.isdir(expanded_text):
                 os.system("explorer.exe " + expanded_text)
             elif len(text) > 0:
+                import re
+                # match error line output by MSVC for quick access.
+                if match := re.match('^(\S+)\((\d+)\)$', text):
+                    text = match[1] + '?' + match[2]
                 os.system("cmd.exe /c" + self.open_app + " " + text)
         self.user32_dll.CloseClipboard();
 
