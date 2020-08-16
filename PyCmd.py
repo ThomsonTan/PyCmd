@@ -506,10 +506,26 @@ def main():
                 force_repaint = False
             else:                                       # Clean key (no modifiers)
                 if rec.Char == chr(0):                  # Special key (arrows and such)
-                    if rec.VirtualKeyCode == 37:        # Left arrow
-                        state.handle(ActionCode.ACTION_LEFT, select)
-                    elif rec.VirtualKeyCode == 39:      # Right arrow
-                        state.handle(ActionCode.ACTION_RIGHT, select)
+                    if rec.VirtualKeyCode == 37 or rec.VirtualKeyCode == 39:
+                        if state.before_cursor + state.after_cursor == '':
+                            state.reset_prev_line()
+                            if rec.VirtualKeyCode == 37 : # Left
+                                changed = dir_hist.go_left()
+                            elif rec.VirtualKeyCode == 39 : # Right
+                                changed = dir_hist.go_right()
+                            if changed:
+                                state.prev_prompt = state.prompt
+                                state.prompt = appearance.prompt()
+                            save_history(dir_hist.locations,
+                                         pycmd_data_dir + '\\dir_history',
+                                         dir_hist.max_len)
+                            if dir_hist.shown:
+                                dir_hist.display()
+                                stdout.write(state.prev_prompt)
+                        elif rec.VirtualKeyCode == 37:        # Left arrow
+                            state.handle(ActionCode.ACTION_LEFT, select)
+                        elif rec.VirtualKeyCode == 39:      # Right arrow
+                            state.handle(ActionCode.ACTION_RIGHT, select)
                     elif rec.VirtualKeyCode == 36:      # Home
                         state.handle(ActionCode.ACTION_HOME, select)
                     elif rec.VirtualKeyCode == 35:      # End
