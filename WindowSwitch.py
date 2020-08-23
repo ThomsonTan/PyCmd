@@ -28,6 +28,8 @@ def init():
     pycmd_data_dir = expand_env_vars(APPDATA + '\\PyCmd')
     winstate_full_path = os.path.join(pycmd_data_dir, windows_state_path)
 
+    if not os.path.exists(pycmd_data_dir):
+        os.mkdir(pycmd_data_dir)
     if not os.path.exists(winstate_full_path):
         open(winstate_full_path, 'a').close()
 
