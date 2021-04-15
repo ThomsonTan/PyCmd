@@ -443,7 +443,8 @@ class InputState:
             elif len(text) > 0:
                 import re
                 # match error line output by MSVC for quick access.
-                if match := re.match('^(\S+)\((\d+)\):$', text):
+                # the line format is similar to C:\somepath\config.cpp(145,11):
+                if match := re.match('^(\S+)\((\d+)(,\d+)?\):$', text):
                     text = match[1] + '?' + match[2]
                 os.system("cmd.exe /c" + self.open_app + " " + text)
         self.user32_dll.CloseClipboard();
