@@ -611,6 +611,18 @@ def main():
                                     tokens[-1] = os.path.join(obj_root, rel_path) + '\\'
                                 completed = ' '.join(tokens)
 
+                    # handle expansion of ctest -R testname to case insensitive comparison.
+                    # no need to handle expanding regex which contains `[' or ']` already.
+                    elif len(tokens) > 2 and tokens[0] == 'ctest' and tokens[-2] == '-R':
+                        suggestions = []
+                        ctest_regex_ignore_case = ''
+                        for ch in tokens[-1]:
+                            if ch.isalpha():
+                                ctest_regex_ignore_case += '[' + ch.swapcase() + ch + ']'
+                            else:
+                                ctest_regex_ignore_case += ch
+                        tokens[-1] = ctest_regex_ignore_case
+                        completed = ' '.join(tokens)
 
                     elif tokens[-1].strip('"').count('%') % 2 == 1:
                         (completed, suggestions) = complete_env_var(state.before_cursor)
