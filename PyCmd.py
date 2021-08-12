@@ -1147,6 +1147,9 @@ def append_tail_datetime(line):
     return line + datetime.datetime.now().strftime("[%Y/%m/%d %I:%M:%S%p %A]")
 
 def remove_tail_datetime(line):
+    # empty line slips in by crashing pycmd?
+    if len(line) == 0:
+        return ''
     if line[-1] == u']':
         i = len(line) - 4
         if i > 0 and line[i] == u'd' and line[i+1] == u'a' and line[i+2] == u'y':
