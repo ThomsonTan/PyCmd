@@ -813,12 +813,14 @@ def main():
             PyCmdUtils.ConnectWithGVim()
         else:
             replace_python_cmd = False
-            if tokens[0] == u'gv':
+            # no new line for gvim and code
+            if tokens[0] == u'gv' or tokens[0] == u'c':
                 no_new_prompt = True
                 # TODO: normal path likely file path.
                 if len(tokens) > 1:
                     for tok_id in range(1, len(tokens)):
-                        tokens[tok_id] = tokens[tok_id].replace('\\\\', '\\')
+                        if '\\\\' in tokens[tok_id]:
+                            tokens[tok_id] = tokens[tok_id].replace('\\\\', '\\')
 
             elif len(tokens)== 1 and tokens[0] in [u'n', u'e', u'l']:
                 global n, e, l
