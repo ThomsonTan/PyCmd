@@ -80,6 +80,7 @@ def init():
     global resultMapFilePath
     if 'PYCMD_RESULT_MAP_FILE_PATH' in os.environ:
         resultMapFilePath = os.environ['PYCMD_RESULT_MAP_FILE_PATH']
+        global create_result_map
         create_result_map = False
     else:
         (handle, resultMapFilePath) = tempfile.mkstemp(dir = pycmd_data_dir + '\\tmp')
@@ -98,6 +99,7 @@ def deinit():
     os.remove(tmpfile)
     os.remove(cmdLineFilePath)
 
+    global create_result_map
     if create_result_map:
         os.remove(resultMapFilePath)
 
