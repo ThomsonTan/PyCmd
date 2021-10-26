@@ -1078,9 +1078,11 @@ def run_command(tokens):
 def run_in_cmd(tokens):
     pseudo_vars = ['CD', 'DATE', 'ERRORLEVEL', 'RANDOM', 'TIME']
 
+    expand_env = False if tokens[0] == 'sd' else True
+
     line_sanitized = ''
     for token in tokens:
-        token_sane = expand_tilde(token)
+        token_sane = expand_tilde(token) if expand_env else token
         if token_sane != '\\' and token_sane[1:] != ':\\':
             token_sane = token_sane.rstrip('\\')
         if token_sane.count('"') % 2 == 1:
