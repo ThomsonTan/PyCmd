@@ -180,6 +180,7 @@ def main():
     run_command(['echo', '>', 'NUL'])
 
     no_new_prompt = False
+    no_history_update = False
 
     edit_cmd_line = False
     interactiveCon = None
@@ -198,6 +199,7 @@ def main():
         force_repaint = True
         dir_hist.shown = False
         debug_run = False
+        no_history_update = False
         if no_new_prompt == False:
             stdout.write('\n')
         else:
@@ -823,6 +825,8 @@ def main():
                     for tok_id in range(1, len(tokens)):
                         if '\\\\' in tokens[tok_id]:
                             tokens[tok_id] = tokens[tok_id].replace('\\\\', '\\')
+            elif tokens[0] == u'a':
+                no_history_update = True
 
             elif len(tokens)== 1 and tokens[0] in [u'n', u'e', u'l']:
                 global n, e, l
@@ -900,18 +904,19 @@ def main():
 
             run_command(tokens)
 
-        # Add to history
-        state.history.add(line)
-        save_history(state.history.list,
-                     pycmd_data_dir + '\\history',
-                     max_cmd_history_lines)
+        if not no_history_update:
+            # Add to history
+            state.history.add(line)
+            save_history(state.history.list,
+                         pycmd_data_dir + '\\history',
+                         max_cmd_history_lines)
 
 
-        # Add to dir history
-        dir_hist.visit_cwd()
-        save_history(dir_hist.locations,
-                     pycmd_data_dir + '\\dir_history',
-                     dir_hist.max_len)
+            # Add to dir history
+            dir_hist.visit_cwd()
+            save_history(dir_hist.locations,
+                         pycmd_data_dir + '\\dir_history',
+                         dir_hist.max_len)
 
 consoleScriptFileName = "pycmd_script.py"
 
