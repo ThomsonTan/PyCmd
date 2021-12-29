@@ -446,6 +446,9 @@ class InputState:
                 # the line format is similar to C:\somepath\config.cpp(145,11):
                 if match := re.match('^(\S+)\((\d+)(,\d+)?\):$', text):
                     text = match[1] + '?' + match[2]
+                # match line starts without white spaces
+                elif match := re.match('^(\S+):(\d+):(\S+)$', text):
+                    text = match[1] + '?' + match[2]
                 os.system("cmd.exe /c" + self.open_app + " " + text)
         self.user32_dll.CloseClipboard();
 
