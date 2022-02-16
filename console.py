@@ -167,7 +167,10 @@ def read_input():
     while True:
         record = INPUT_RECORD()
         numEventsWritten = c_int()
-        ctypes.windll.kernel32.ReadConsoleInputA(stdin_handle, byref(record), 1, byref(numEventsWritten))
+        # LastErrorValue: (Win32) 0xe9 (233) - No process is on the other end of the pipe.
+        # LastStatusValue: (NTSTATUS) 0xc00000b0 - The specified named pipe is in the disconnected state.
+        # below call coudl return above error then entering loop costs CPU!
+        ret = ctypes.windll.kernel32.ReadConsoleInputA(stdin_handle, byref(record), 1, byref(numEventsWritten))
         if numEventsWritten.value == 1 and record.EventType == KEY_EVENT and record.KeyDown:
             return record
 
