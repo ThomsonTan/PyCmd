@@ -463,7 +463,7 @@ def main():
                 #     state.handle(ActionCode.ACTION_PREV)
                 # elif rec.VirtualKeyCode == 78:          # Alt-N
                 #     state.handle(ActionCode.ACTION_NEXT)
-                elif rec.VirtualKeyCode == 68:          # Alt-D
+                elif rec.VirtualKeyCode == 90:          # Alt-Z
                     if state.before_cursor + state.after_cursor == '':
                         dir_hist.display()
                         dir_hist.check_overflow(remove_escape_sequences(state.prev_prompt))
