@@ -822,9 +822,16 @@ def main():
                 no_new_prompt = True
                 # TODO: normal path likely file path.
                 if len(tokens) > 1:
-                    for tok_id in range(1, len(tokens)):
-                        if '\\\\' in tokens[tok_id]:
-                            tokens[tok_id] = tokens[tok_id].replace('\\\\', '\\')
+                    # TODO: refactor the if statement
+                    if len(tokens[1]) == 2 and tokens[1][0] == '@' and ord(tokens[1][1]) >= ord('a')  and ord(tokens[1][1]) <= ord('z') :
+                        complete_index = ord(tokens[1][1]) - ord('a')
+                        completed = complete_result_map(complete_index, resultMapFilePath)
+                        if len(completed) > 0:
+                            tokens[1] = completed
+                    else:
+                        for tok_id in range(1, len(tokens)):
+                            if '\\\\' in tokens[tok_id]:
+                                tokens[tok_id] = tokens[tok_id].replace('\\\\', '\\')
             elif tokens[0] == u'a':
                 no_history_update = True
 
