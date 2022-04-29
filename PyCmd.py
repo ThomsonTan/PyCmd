@@ -835,7 +835,11 @@ def main():
                                 tokens[tok_id] = curr_tok.replace('\\\\', '\\')
                             # the path is absolute path like c:/tmp/t.py, gv expects c:\tmp/t.py
                             elif len(curr_tok) > 3 and curr_tok[1] == ':' and curr_tok[2] == '/':
-                                tokens[tok_id] = curr_tok[:2] + '\\' + curr_tok[3:]
+                                tail_tok = curr_tok[3:]
+                                last_delim = tail_tok.rfind(':')
+                                if last_delim > 0 and tail_tok[last_delim+1:].isnumeric():
+                                    tail_tok = tail_tok[:last_delim] + '?' + tail_tok[last_delim+1:]
+                                tokens[tok_id] = curr_tok[:2] + '\\' + tail_tok
             elif tokens[0] == u'a':
                 no_history_update = True
 
