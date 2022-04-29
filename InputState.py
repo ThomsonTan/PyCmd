@@ -449,6 +449,14 @@ class InputState:
                 # match line starts without white spaces
                 elif match := re.match('^(\S+):(\d+):(\S+)$', text):
                     text = match[1] + '?' + match[2]
+                # match logs in cmake output?
+                elif match := re.match('^(\S+):(\d+)', text):
+                    path_match = match[1]
+                    line_match = match[2]
+                    if len(path_match) > 2 and path_match[1] == ':' and path_match[2] == '/':
+                        path_match = path_match[:2] + '\\' + path_match[3:]
+                    text = path_match + '?' + line_match
+
                 os.system("cmd.exe /c" + self.open_app + " " + text)
         self.user32_dll.CloseClipboard();
 
