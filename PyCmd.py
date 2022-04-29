@@ -830,8 +830,12 @@ def main():
                             tokens[1] = completed
                     else:
                         for tok_id in range(1, len(tokens)):
-                            if '\\\\' in tokens[tok_id]:
-                                tokens[tok_id] = tokens[tok_id].replace('\\\\', '\\')
+                            curr_tok = tokens[tok_id]
+                            if '\\\\' in curr_tok:
+                                tokens[tok_id] = curr_tok.replace('\\\\', '\\')
+                            # the path is absolute path like c:/tmp/t.py, gv expects c:\tmp/t.py
+                            elif len(curr_tok) > 3 and curr_tok[1] == ':' and curr_tok[2] == '/':
+                                tokens[tok_id] = curr_tok[:2] + '\\' + curr_tok[3:]
             elif tokens[0] == u'a':
                 no_history_update = True
 
