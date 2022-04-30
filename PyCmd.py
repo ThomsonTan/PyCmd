@@ -616,6 +616,11 @@ def main():
                                 else:
                                     tokens[-1] = os.path.join(obj_root, rel_path) + '\\'
                                 completed = ' '.join(tokens)
+                    elif last_token_len == 1 and tokens[-1] == '@' and tokens[0] == 'cmake':
+                        # only one of below 2 are used?
+                        suggestions = []
+                        tokens[-1] = command_cc.complete_suggestion_for_cc()
+                        completed = ' '.join(tokens)
 
                     # handle expansion of ctest -R testname to case insensitive comparison.
                     # no need to handle expanding regex which contains `[' or ']` already.

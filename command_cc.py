@@ -47,6 +47,9 @@ def get_to_dir(dir_id):
             to_dir = os.path.join(pri_git_path, proj_name)
             if not os.path.isdir(to_dir):
                 print(f"\nHow could this happen, source dir doesn't exist?")
+        elif dir_type > 1:
+            # TODO, support multiple build profiles
+            pass
 
     return to_dir
 
@@ -78,3 +81,14 @@ def get_proj_and_type():
             proj_name = proj_name[:sep_pos]
 
     return (proj_name, dir_type)
+
+def complete_suggestion_for_cc():
+    complete_str = ''
+    (proj_name, dir_type) = get_proj_and_type()
+    if dir_type > 0:
+        source_dir = os.path.join(os.environ['PRIGIT'], proj_name)
+        # TODO, support multiple config
+        init_cache = os.path.join(os.environ['PRIGIT'], 'cc', proj_name + '.cmake')
+        complete_str += f'-S {source_dir} -C {init_cache}'
+
+    return complete_str
