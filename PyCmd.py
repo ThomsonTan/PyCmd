@@ -20,6 +20,8 @@ from console import remove_escape_sequences
 from pycmd_public import color, appearance, behavior
 from common import apply_settings, sanitize_settings
 
+import command_cc
+
 import string
 import datetime
 
@@ -815,6 +817,9 @@ def main():
             continue
         elif tokens[0] == u'cg': # Connect to GVim window
             PyCmdUtils.ConnectWithGVim()
+        # shortcut for change devlopment directory
+        elif tokens[0] == u'cc':
+            command_cc.run(tokens[1:])
         else:
             replace_python_cmd = False
             # no new line for gvim and code
