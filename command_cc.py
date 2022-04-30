@@ -48,6 +48,7 @@ def get_to_dir(dir_id):
                     print(f"\n expected build dir {to_dir} is a file?")
                     # to_dir = ''
         # in build dir
+        # TODO: is switch back to the top of source dir useful, instead of back to the prev dir in source?
         elif dir_type == 1:
             to_dir = os.path.join(pri_git_dir, proj_name)
             if not os.path.isdir(to_dir):
