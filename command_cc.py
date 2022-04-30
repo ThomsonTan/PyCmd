@@ -81,7 +81,7 @@ def get_proj_and_type():
         if (sep_pos := proj_name.find('.')) != -1:
             proj_name = proj_name[:sep_pos]
 
-    return (proj_name, dir_type)
+    return proj_name, dir_type
 
 def complete_suggestion_for_cc():
     complete_str = ''
