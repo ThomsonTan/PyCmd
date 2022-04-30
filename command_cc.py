@@ -26,25 +26,7 @@ def get_to_dir(dir_id):
     pri_git_path = os.environ['PRIGIT']
     pri_git_build_path = pri_git_path+'b'
 
-    curr_dir_lower = curr_dir.lower()
-    pri_git_path_lower = pri_git_path.lower()
-    pri_git_build_path_lower = pri_git_path.lower()+'b'
-
-    proj_name = ''
-    dir_type = -1
-
-    if curr_dir_lower.startswith(pri_git_path_lower + os.sep):
-        dir_type = 0
-        proj_name = curr_dir[len(pri_git_path)+1:]
-        if (sep_pos := proj_name.find(os.sep)) != -1:
-            proj_name = proj_name[:sep_pos]
-    elif curr_dir.startswith(pri_git_build_path_lower + os.sep):
-        dir_type = 1
-        proj_name = curr_dir[len(pri_git_build_path)+1:]
-        if (sep_pos := proj_name.find(os.sep)) != -1:
-            proj_name = proj_name[:sep_pos]
-        if (sep_pos := proj_name.find('.')) != -1:
-            proj_name = proj_name[:sep_pos]
+    (proj_name, dir_type) = get_proj_and_type()
 
     if len(proj_name) == 0 or dir_type == -1:
         return ''
@@ -66,3 +48,29 @@ def get_to_dir(dir_id):
 
     return to_dir
 
+def get_proj_and_type():
+    curr_dir = os.getcwd()
+    pri_git_path = os.environ['PRIGIT']
+    pri_git_build_path = pri_git_path+'b'
+
+    curr_dir_lower = curr_dir.lower()
+    pri_git_path_lower = pri_git_path.lower()
+    pri_git_build_path_lower = pri_git_path.lower()+'b'
+
+    proj_name = ''
+    dir_type = -1
+
+    if curr_dir_lower.startswith(pri_git_path_lower + os.sep):
+        dir_type = 0
+        proj_name = curr_dir[len(pri_git_path)+1:]
+        if (sep_pos := proj_name.find(os.sep)) != -1:
+            proj_name = proj_name[:sep_pos]
+    elif curr_dir.startswith(pri_git_build_path_lower + os.sep):
+        dir_type = 1
+        proj_name = curr_dir[len(pri_git_build_path)+1:]
+        if (sep_pos := proj_name.find(os.sep)) != -1:
+            proj_name = proj_name[:sep_pos]
+        if (sep_pos := proj_name.find('.')) != -1:
+            proj_name = proj_name[:sep_pos]
+
+    return (proj_name, dir_type)
