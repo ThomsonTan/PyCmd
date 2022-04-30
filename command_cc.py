@@ -28,6 +28,8 @@ def get_to_dir(dir_id):
 
     (proj_name, dir_type) = get_proj_and_type()
 
+    #TODO, for source dir, check CMakeLists.txt exists before switching?
+
     if len(proj_name) == 0 or dir_type == -1:
         return ''
 
@@ -48,6 +50,8 @@ def get_to_dir(dir_id):
 
     return to_dir
 
+# dir_type: 0 -> source
+#           1 -> build
 def get_proj_and_type():
     curr_dir = os.getcwd()
     pri_git_path = os.environ['PRIGIT']
