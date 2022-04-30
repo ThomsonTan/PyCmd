@@ -88,8 +88,10 @@ def complete_suggestion_for_cc():
     (proj_name, dir_type) = get_proj_and_type()
     if dir_type > 0:
         source_dir = os.path.join(os.environ['PRIGIT'], proj_name)
+        complete_str += f'-S {source_dir}'
         # TODO, support multiple config
         init_cache = os.path.join(os.environ['PRIGIT'], 'cc', proj_name + '.cmake')
-        complete_str += f'-S {source_dir} -C {init_cache}'
+        if os.path.isfile(init_cache):
+            compelte_str += f' -C {init_cache}'
 
     return complete_str
