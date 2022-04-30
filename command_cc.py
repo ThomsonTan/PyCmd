@@ -2,7 +2,16 @@ import sys, os
 import PyCmd
 
 def run(tokens):
-    cd_to_dir(tokens)
+    if len(tokens) == 1 and tokens[0] == 'c':
+        proj_name, dir_type = get_proj_and_type()
+        if dir_type > 0:
+            print("\nrun rd /s/q .")
+            os.system('cmd.exe /c rd /s/q .')
+        else:
+            print("\nThe cc clear command is only for build dir")
+    else:
+        # default to cd(change directory)
+        cd_to_dir(tokens)
     
 def cd_to_dir(tokens):
     to_dir_id = -1
@@ -92,6 +101,6 @@ def complete_suggestion_for_cc():
         # TODO, support multiple config
         init_cache = os.path.join(os.environ['PRIGIT'], 'cc', proj_name + '.cmake')
         if os.path.isfile(init_cache):
-            compelte_str += f' -C {init_cache}'
+            complete_str += f' -C {init_cache}'
 
     return complete_str
