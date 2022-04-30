@@ -853,7 +853,7 @@ def main():
             elif tokens[0] == u'a':
                 no_history_update = True
 
-            elif len(tokens)== 1 and tokens[0] in [u'n', u'e', u'l']:
+            elif len(tokens) == 1 and tokens[0] in [u'n', u'e', u'l']:
                 global n, e, l
                 cmd_func = {u'n':n, u'e':e, u'l':l}
                 if tokens[0] == u'l':
@@ -872,7 +872,8 @@ def main():
             elif tokens[0].endswith('.py') or tokens[0].endswith('.py"'):
                 tokens.insert(0, None)
                 replace_python_cmd = True
-
+            elif tokens[0] == 'time':
+                tokens[0] = 'cmake -E time'
             if replace_python_cmd:
                 if u' ' in sys.executable:
                     tokens[0] = '"' + sys.executable + '"'
