@@ -26,7 +26,7 @@ import string
 import datetime
 
 import PyCmdUtils
-import WindowSwitch
+import WindowSwitch, pathlib
 
 pycmd_data_dir = None
 pycmd_install_dir = None
@@ -1023,6 +1023,10 @@ def cls():
     os.system('cls')
 
 
+def resolve_path_case(path):
+    casePath = str(pathlib.Path(path.decode('utf-8')).resolve(strict=True))
+    return casePath
+
 def internal_cd(args):
     """The internal CD command"""
     try:
@@ -1034,8 +1038,9 @@ def internal_cd(args):
                 target = target.rstrip(u'\\')
             target = expand_env_vars(target.strip(u'"').strip(u' '))
             to_dir = target.encode(sys.getfilesystemencoding())
+        to_dir = resolve_path_case(to_dir)
         os.chdir(to_dir)
-        WindowSwitch.update_window_state(to_dir.decode())
+        WindowSwitch.update_window_state(to_dir)
     except OSError as error:
         stdout.write(u'\n' + str(error).replace('\\\\', '\\'))
     os.environ['CD'] = os.getcwd()
