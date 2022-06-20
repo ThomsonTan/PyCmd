@@ -83,7 +83,7 @@ def get_proj_and_type():
         proj_name = curr_dir[len(pri_git_dir)+1:]
         if (sep_pos := proj_name.find(os.sep)) != -1:
             proj_name = proj_name[:sep_pos]
-    elif curr_dir.startswith(pri_git_build_dir_lower + os.sep):
+    elif curr_dir_lower.startswith(pri_git_build_dir_lower + os.sep):
         dir_type = 1
         proj_name = curr_dir[len(pri_git_build_dir)+1:]
         if (sep_pos := proj_name.find(os.sep)) != -1:
