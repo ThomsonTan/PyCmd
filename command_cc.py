@@ -101,7 +101,7 @@ def complete_suggestion_for_cc():
         complete_str += f'-S {source_dir}'
 
         ## hack for LLVM, where the build root source dir is under a subdir llvm.
-        if proj_name.lower() == 'LLVM':
+        if proj_name.lower() == 'llvm':
             complete_str += os.sep + 'llvm'
 
         # TODO, support multiple config
