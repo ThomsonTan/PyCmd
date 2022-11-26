@@ -43,7 +43,7 @@ def get_to_dir(dir_id):
             to_dir = os.path.join(pri_git_build_dir, proj_name)
             if not os.path.isdir(to_dir):
                 if not os.path.isfile(to_dir):
-                    os.mkdir(to_dir)
+                    os.makedirs(to_dir)
                 else:
                     print(f"\n expected build dir {to_dir} is a file?")
                     # to_dir = ''
@@ -99,6 +99,11 @@ def complete_suggestion_for_cc():
     if dir_type > 0:
         source_dir = os.path.join(os.environ['PRIGIT'], proj_name)
         complete_str += f'-S {source_dir}'
+
+        ## hack for LLVM, where the build root source dir is under a subdir llvm.
+        if proj_name.lower() == 'LLVM':
+            complete_str += os.sep + 'llvm'
+
         # TODO, support multiple config
         init_cache = os.path.join(os.environ['PRIGIT'], 'cc', proj_name + '.cmake')
         if os.path.isfile(init_cache):
