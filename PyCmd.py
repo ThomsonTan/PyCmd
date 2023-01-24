@@ -853,17 +853,17 @@ def main():
             elif tokens[0] == u'a':
                 no_history_update = True
 
-            elif len(tokens) == 1 and tokens[0] in [u'n', u'e', u'l']:
-                global n, e, l
-                cmd_func = {u'n':n, u'e':e, u'l':l}
-                if tokens[0] == u'l':
-                    # evaluate script after new line
-                    stdout.write('\n')
-                try:
-                    cmd_func[tokens[0]]()
-                except Exception as ex:
-                    print("Got exception: " + str(ex))
-                continue
+            # elif len(tokens) == 1 and tokens[0] in [u'n', u'e', u'l']:
+            #     global n, e, l
+            #     cmd_func = {u'n':n, u'e':e, u'l':l}
+            #     if tokens[0] == u'l':
+            #         # evaluate script after new line
+            #         stdout.write('\n')
+            #     try:
+            #         cmd_func[tokens[0]]()
+            #     except Exception as ex:
+            #         print("Got exception: " + str(ex))
+            #     continue
             elif tokens[0] in [u'p', u'pip'] :
                 if tokens[0] == u'pip':
                     tokens.insert(0, u'-m')
