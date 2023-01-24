@@ -47,8 +47,8 @@ def get_to_dir(dir_id):
                 else:
                     print(f"\n expected build dir {to_dir} is a file?")
                     # to_dir = ''
-            if not 'BUILD_DIR' in os.environ:
-                os.environ['BUILD_DIR'] = to_dir
+            if not 'PYCMD_BUILD_DIR' in os.environ:
+                os.environ['PYCMD_BUILD_DIR'] = to_dir
         # in build dir
         # TODO: is switch back to the top of source dir useful, instead of back to the prev dir in source?
         elif dir_type == 1:
