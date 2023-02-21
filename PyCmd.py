@@ -875,7 +875,9 @@ def main():
             elif tokens[0] == 'time':
                 tokens[0] = 'cmake -E time'
             if replace_python_cmd:
-                if u' ' in sys.executable:
+                if 'VIRTUAL_ENV' in os.environ:
+                    tokens[0] = os.path.join(os.environ['VIRTUAL_ENV'], 'Scripts', 'python')
+                elif u' ' in sys.executable:
                     tokens[0] = '"' + sys.executable + '"'
                 else:
                     tokens[0] = sys.executable
