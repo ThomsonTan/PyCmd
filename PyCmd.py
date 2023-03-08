@@ -841,6 +841,11 @@ def main():
                     else:
                         for tok_id in range(1, len(tokens)):
                             curr_tok = tokens[tok_id]
+
+                            if tokens[0] == u'gv' and curr_tok == '.':
+                                curr_tok = os.getcwd()
+                                tokens[tok_id] = curr_tok
+
                             if '\\\\' in curr_tok:
                                 tokens[tok_id] = curr_tok.replace('\\\\', '\\')
                             # the path is absolute path like c:/tmp/t.py, gv expects c:\tmp/t.py
@@ -850,6 +855,19 @@ def main():
                                 if last_delim > 0 and tail_tok[last_delim+1:].isnumeric():
                                     tail_tok = tail_tok[:last_delim] + '?' + tail_tok[last_delim+1:]
                                 tokens[tok_id] = curr_tok[:2] + '\\' + tail_tok
+
+                            # to open folder, seems appending a dot to the path is more reliable for gvim
+                            if tokens[0] == u'gv':
+                                curr_tok = tokens[tok_id]
+                                if os.path.isdir(curr_tok):
+                                    if curr_tok[-1] != '.':
+                                        if curr_tok[-1] == '/':
+                                            curr_tok += '.'
+                                        else:
+                                            curr_tok += '/.'
+
+                                        tokens[tok_id] = curr_tok
+
             elif tokens[0] == u'a':
                 no_history_update = True
 
