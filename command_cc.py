@@ -127,4 +127,8 @@ def complete_suggestion_for_cc():
         else:
             complete_str += f' -G Ninja'
 
+            vcpkg_root = os.path.join(os.environ['PRIGIT'], 'vcpkg')
+            if os.path.isdir(vcpkg_root):
+                complete_str += f' -D CMAKE_TOOLCHAIN_FILE={vcpkg_root}/scripts/buildsystems/vcpkg.cmake'
+
     return complete_str
