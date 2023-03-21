@@ -131,4 +131,6 @@ def complete_suggestion_for_cc():
             if os.path.isdir(vcpkg_root):
                 complete_str += f' -D CMAKE_TOOLCHAIN_FILE={vcpkg_root}/scripts/buildsystems/vcpkg.cmake'
 
+            complete_str += ' && b'
+
     return complete_str
