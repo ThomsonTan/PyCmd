@@ -621,6 +621,13 @@ def main():
                         suggestions = []
                         tokens[-1] = command_cc.complete_suggestion_for_cc()
                         completed = ' '.join(tokens)
+                    elif tokens[0] == 'cc':
+                        suggestions = []
+                        cc_expand_to_dir = command_cc.get_to_dir(-1)
+                        if cc_expand_to_dir[-1] != '\\':
+                            cc_expand_to_dir += '\\'
+                        tokens[0] = cc_expand_to_dir
+                        completed = tokens[0]
 
                     # handle expansion of ctest -R testname to case insensitive comparison.
                     # no need to handle expanding regex which contains `[' or ']` already.

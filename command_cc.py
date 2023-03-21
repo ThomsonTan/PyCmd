@@ -8,7 +8,11 @@ def run(tokens):
             print("\nrun rd /s/q .")
             os.system('cmd.exe /c rd /s/q .')
         else:
-            print("\nThe cc clear command is only for build dir")
+            # remove the default output dir
+            to_dir = get_to_dir(-1)
+            if len(to_dir) > 0 and os.path.isdir(to_dir):
+                print(f'\nrun rd /s/q {to_dir}')
+                os.system(f'cmd.exe /c rd /s/q {to_dir}')
     else:
         # default to cd(change directory)
         cd_to_dir(tokens)
@@ -98,9 +102,19 @@ def get_proj_and_type():
 def complete_suggestion_for_cc():
     complete_str = ''
     (proj_name, dir_type) = get_proj_and_type()
-    if dir_type > 0:
+    if dir_type >= 0:
         source_dir = os.path.join(os.environ['PRIGIT'], proj_name)
         complete_str += f'-S {source_dir}'
+
+        # set build out dir
+        if 'PRIGIT_B' in os.environ:
+            out_dir = os.path.join(os.environ['PRIGIT_B'], proj_name)
+        else:
+            out_dir = os.path.join(os.environ['PRIGIT'] + '_b', proj_name)
+
+        complete_str += f' -B {out_dir}'
+
+        os.environ['PYCMD_BUILD_DIR'] = out_dir
 
         ## hack for LLVM, where the build root source dir is under a subdir llvm.
         if proj_name.lower() == 'llvm':
@@ -110,5 +124,7 @@ def complete_suggestion_for_cc():
         init_cache = os.path.join(os.environ['PRIGIT'], 'cc', proj_name + '.cmake')
         if os.path.isfile(init_cache):
             complete_str += f' -C {init_cache}'
+        else:
+            complete_str += f' -G Ninja'
 
     return complete_str
