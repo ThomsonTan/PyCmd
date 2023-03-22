@@ -407,6 +407,8 @@ def main():
                 # elif rec.VirtualKeyCode == 87:          # Ctrl-W
                 #     state.handle(ActionCode.ACTION_CUT)
                 #     auto_select = False
+                elif rec.VirtualKeyCode == 87:          # Ctrl-W
+                    state.handle(ActionCode.ACTION_BACKSPACE_WORD, sep_chars)
                 #elif rec.VirtualKeyCode == 86:          # Ctrl-V
                 #    state.handle(ActionCode.ACTION_PASTE)
                 #    auto_select = False
