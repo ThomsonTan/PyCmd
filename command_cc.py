@@ -28,6 +28,21 @@ def cd_to_dir(tokens):
     else:
         print("\nNot in source or build dir?")
 
+def expand_path(dir_id):
+    cwd = os.getcwd()
+    cwd_basename = os.path.basename(cwd)
+    if cwd_basename.startswith('rune_'):
+        # For Rust project
+        exe_path = os.path.join(cwd, 'target', 'debug', cwd_basename[5:] + '.exe')
+        if os.path.isfile(exe_path):
+            return exe_path
+        exe_path = os.path.join(cwd, 'target', 'release', cwd_basename[5:] + '.exe')
+        if os.path.isfile(exe_path):
+            return exe_path
+        return ''
+    else:
+        return get_to_dir(dir_id)
+
 # -1 -> auto switch between source and 0
 # 0 -> build dir
 def get_to_dir(dir_id):

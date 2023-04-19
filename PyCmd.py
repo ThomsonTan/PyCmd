@@ -625,8 +625,8 @@ def main():
                         completed = ' '.join(tokens)
                     elif tokens[0] == 'cc':
                         suggestions = []
-                        cc_expand_to_dir = command_cc.get_to_dir(-1)
-                        if cc_expand_to_dir[-1] != '\\':
+                        cc_expand_to_dir = command_cc.expand_path(-1)
+                        if cc_expand_to_dir[-1] != '\\' and os.path.isdir(cc_expand_to_dir):
                             cc_expand_to_dir += '\\'
                         tokens[0] = cc_expand_to_dir
                         completed = tokens[0]
