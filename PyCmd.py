@@ -498,9 +498,9 @@ def main():
                     state.handle(ActionCode.ACTION_BACKSPACE_WORD)
                 elif rec.VirtualKeyCode == 191:         # Alt-/
                     state.handle(ActionCode.ACTION_EXPAND)
-                elif rec.VirtualKeyCode == 75:          # Alt-K
+                elif rec.VirtualKeyCode == 75 or rec.VirtualKeyCode == 88:  # Alt-K or Alt-X
                     state.handle(ActionCode.ACTION_PREV)
-                elif rec.VirtualKeyCode == 74:          # Alt-J
+                elif rec.VirtualKeyCode == 74:  # Alt-J
                     state.handle(ActionCode.ACTION_NEXT)
             elif is_shift_pressed(rec) and rec.VirtualKeyCode == 33:    # Shift-PgUp
                 (_, t, _, b) = get_viewport()
