@@ -120,6 +120,10 @@ def complete_suggestion_for_cc():
     if dir_type >= 0:
         source_dir = os.path.join(os.environ['PRIGIT'], proj_name)
         complete_str += f'-S {source_dir}'
+       
+        ## hack for LLVM, where the build root source dir is under a subdir llvm.
+        if proj_name.lower() == 'llvm':
+            complete_str += os.sep + 'llvm'
 
         # set build out dir
         if 'PRIGIT_B' in os.environ:
@@ -130,10 +134,6 @@ def complete_suggestion_for_cc():
         complete_str += f' -B {out_dir}'
 
         os.environ['PYCMD_BUILD_DIR'] = out_dir
-
-        ## hack for LLVM, where the build root source dir is under a subdir llvm.
-        if proj_name.lower() == 'llvm':
-            complete_str += os.sep + 'llvm'
 
         # TODO, support multiple config
         init_cache = os.path.join(os.environ['PRIGIT'], 'cc', proj_name + '.cmake')
