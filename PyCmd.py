@@ -154,6 +154,11 @@ def main():
         elif switch in ['/Q', '-Q']:
             # Quiet mode: suppress messages
             behavior.quiet_mode = True
+        elif switch in ['/B', '-B']:
+            # Build mode, set the build dir
+            # Don't override it if already set here.
+            if not 'PYCMD_BUILD_DIR' in os.environ:
+                command_cc.set_build_dir_env_var()
         else:
             # Invalid command line switch
             stderr.write('PyCmd: unrecognized option `' + sys.argv[arg] + '\'\n')
@@ -951,6 +956,9 @@ def main():
                 if len(tokens) == 2:
                     cmd_arg1 = tokens[1].replace('/', '\\')
                     tokens[1] = cmd_arg1
+            elif tokens[0] == u'b':
+                # reset the build dir anyway?
+                command_cc.set_build_dir_env_var()
 
             if debug_run:
                 tokens.insert(0, u'wdt.cmd')

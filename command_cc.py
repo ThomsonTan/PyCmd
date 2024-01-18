@@ -43,8 +43,9 @@ def expand_path(dir_id):
     else:
         return get_to_dir(dir_id)
 
-# -1 -> auto switch between source and 0
-# 0 -> build dir
+# dir_id -1 -> auto switch between source and 0
+# dir_id 0 -> build dir
+# TODO dir_id 0 always returns empty?
 def get_to_dir(dir_id):
     curr_dir, pri_git_dir, pri_git_build_dir = get_path()
 
@@ -79,6 +80,22 @@ def get_to_dir(dir_id):
             pass
 
     return to_dir
+
+def set_build_dir_env_var():
+    curr_dir, pri_git_dir, pri_git_build_dir = get_path()
+    proj_name, dir_type = get_proj_and_type()
+
+    if len(proj_name) == 0 or dir_type == -1:
+        return
+
+    build_dir = os.path.join(pri_git_build_dir, proj_name)
+    if not os.path.isdir(build_dir):
+        if not os.path.isfile(build_dir):
+            # TODO check makedirs failed
+            os.makedirs(build_dir)
+        else:
+            print(f"\n expected build dir {build_dir} is a file?")
+    os.environ['PYCMD_BUILD_DIR'] = build_dir
 
 def get_path():
     curr_dir = os.getcwd()
