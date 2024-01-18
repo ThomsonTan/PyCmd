@@ -87,7 +87,7 @@ def set_build_dir_env_var():
 
     if len(proj_name) == 0 or dir_type == -1:
         # don't leave it as empty once called set_build_dir_env_var
-        os.environ['PYCMD_BUILD_DIR'] = '<not_in_source_or_build_dir>'
+        os.environ['PYCMD_BUILD_DIR'] = 'not_in_source_or_build_dir'
         return
 
     build_dir = os.path.join(pri_git_build_dir, proj_name)
