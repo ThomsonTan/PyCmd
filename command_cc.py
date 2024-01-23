@@ -2,20 +2,32 @@ import sys, os
 import PyCmd
 
 def run(tokens):
-    if len(tokens) == 1 and tokens[0] == 'c':
-        proj_name, dir_type = get_proj_and_type()
-        if dir_type > 0:
-            print("\nrun rd /s/q .")
-            os.system('cmd.exe /c rd /s/q .')
-        else:
-            # remove the default output dir
-            to_dir = get_to_dir(-1)
-            if len(to_dir) > 0 and os.path.isdir(to_dir):
-                print(f'\nrun rd /s/q {to_dir}')
-                os.system(f'cmd.exe /c rd /s/q {to_dir}')
-    else:
+    if len(tokens) == 0:
         # default to cd(change directory)
         cd_to_dir(tokens)
+        return
+
+    if tokens[0] == 'd':
+        run_cmd = 'rd /s/q .'
+    elif tokens[0] == 'c':
+        run_cmd = 'del CMakeCache.txt'
+    else:
+        print(f'\nUnknown command {tokens[0]}')
+        return
+    
+    proj_name, dir_type = get_proj_and_type()
+    if dir_type > 0:
+        print(f'\nrun "{run_cmd}" in cwd\n')
+        os.system(f'cmd.exe /c {run_cmd}')
+    else:
+        # remove the default output dir
+        to_dir = get_to_dir(-1)
+        if len(to_dir) > 0 and os.path.isdir(to_dir):
+            print(f'\nrun "{run_cmd}" in {to_dir}\n')
+            orig_dir = os.getcwd()
+            os.chdir(to_dir)
+            os.system(f'cmd.exe /c {run_cmd}')
+            os.chdir(orig_dir)
     
 def cd_to_dir(tokens):
     to_dir_id = -1
