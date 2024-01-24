@@ -145,10 +145,18 @@ def get_proj_and_type():
 
     return proj_name, dir_type
 
-def complete_suggestion_for_cc():
+def complete_suggestion_for_cc(clean_bin=False):
     complete_str = ''
     (proj_name, dir_type) = get_proj_and_type()
     if dir_type >= 0:
+                # set build out dir
+        if 'PRIGIT_B' in os.environ:
+            out_dir = os.path.join(os.environ['PRIGIT_B'], proj_name)
+        else:
+            out_dir = os.path.join(os.environ['PRIGIT'] + '_b', proj_name)
+
+        complete_str += f'rd /s/q {out_dir} & cmake ' if clean_bin else '' 
+
         source_dir = os.path.join(os.environ['PRIGIT'], proj_name)
         complete_str += f'-S {source_dir}'
        
@@ -156,11 +164,6 @@ def complete_suggestion_for_cc():
         if proj_name.lower() == 'llvm':
             complete_str += os.sep + 'llvm'
 
-        # set build out dir
-        if 'PRIGIT_B' in os.environ:
-            out_dir = os.path.join(os.environ['PRIGIT_B'], proj_name)
-        else:
-            out_dir = os.path.join(os.environ['PRIGIT'] + '_b', proj_name)
 
         complete_str += f' -B {out_dir}'
 
@@ -177,6 +180,6 @@ def complete_suggestion_for_cc():
             if os.path.isdir(vcpkg_root):
                 complete_str += f' -D CMAKE_TOOLCHAIN_FILE={vcpkg_root}/scripts/buildsystems/vcpkg.cmake'
 
-            complete_str += ' && b'
+        complete_str += ' && b'
 
     return complete_str

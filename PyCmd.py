@@ -635,6 +635,11 @@ def main():
                             cc_expand_to_dir += '\\'
                         tokens[0] = cc_expand_to_dir
                         completed = tokens[0]
+                    elif tokens[0] == 'c' and len(tokens) == 1: # acts as shortcut of 'cmkae @'
+                        # Is suggestion needed?
+                        suggestions = []
+                        tokens[0] = command_cc.complete_suggestion_for_cc(clean_bin = True)
+                        completed = ' '.join(tokens)
 
                     # handle expansion of ctest -R testname to case insensitive comparison.
                     # no need to handle expanding regex which contains `[' or ']` already.
