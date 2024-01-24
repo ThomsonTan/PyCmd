@@ -147,6 +147,11 @@ def get_proj_and_type():
 
 def complete_suggestion_for_cc(clean_bin=False):
     complete_str = ''
+
+    if not 'VSINSTALLDIR' in os.environ:
+        print('\nRun vcvarsall.bat first!\n')
+        return complete_str
+
     (proj_name, dir_type) = get_proj_and_type()
     if dir_type >= 0:
                 # set build out dir
