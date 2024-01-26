@@ -163,7 +163,9 @@ def complete_suggestion_for_cc(clean_bin=False):
         complete_str += f'rd /s/q {out_dir} & cmake ' if clean_bin else '' 
 
         source_dir = os.path.join(os.environ['PRIGIT'], proj_name)
-        complete_str += f'-S {source_dir}'
+        # Don't add -S if CMakeLists.txt doesn't exist, assume current dir is source dir
+        if os.path.isfile(os.path.join(source_dir, 'CMakeLists.txt')):
+            complete_str += f'-S {source_dir}'
        
         ## hack for LLVM, where the build root source dir is under a subdir llvm.
         if proj_name.lower() == 'llvm':
