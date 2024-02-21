@@ -114,7 +114,11 @@ def set_build_dir_env_var():
 def get_path():
     curr_dir = os.getcwd()
     pri_git_dir = os.environ['PRIGIT']
-    pri_git_build_dir = pri_git_dir + '_b'
+
+    if 'PRIGIT_B' in os.environ:
+        pri_git_build_dir = os.environ['PRIGIT_B']
+    else:
+        pri_git_build_dir = pri_git_dir + '_b'
 
     return curr_dir, pri_git_dir, pri_git_build_dir
 
