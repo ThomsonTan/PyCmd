@@ -510,12 +510,15 @@ def main():
                         state.handle(ActionCode.ACTION_UNDO)
                     else:
                         state.handle(ActionCode.ACTION_REDO) #Alt-Shift-U
-                elif rec.VirtualKeyCode == 86:          # Alt-V
-                    state.handle(ActionCode.ACTION_PASTE)
-                    auto_select = False
+                # elif rec.VirtualKeyCode == 86:          # Alt-V
+                #     state.handle(ActionCode.ACTION_PASTE)
+                #     auto_select = False
                 elif rec.VirtualKeyCode == 87:          # Alt-W
                     state.handle(ActionCode.ACTION_COPY)
                     state.reset_selection()
+                    auto_select = False
+                elif rec.VirtualKeyCode == 90:          # Alt-V
+                    state.handle(ActionCode.ACTION_PASTE)
                     auto_select = False
                 elif rec.VirtualKeyCode == 46:          # Alt-Delete
                     state.handle(ActionCode.ACTION_DELETE_WORD)
