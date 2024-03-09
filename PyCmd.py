@@ -298,6 +298,26 @@ def main():
                               hint_folder_after +
                               color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.text)
                 else :
+                    if 'PROMPT' in os.environ:
+                        expanded_prompt = os.environ['PROMPT']
+                        if expanded_prompt != '$P$G':
+                            expanded_prompt =  color.Fore.GREEN + expanded_prompt
+                        expanded_prompt = expanded_prompt.replace('$P', color.Fore.DEFAULT + os.environ['CD'])
+
+                        # run git branch command
+                        from subprocess import Popen, PIPE
+
+                        p = Popen('git branch --show-current', shell=True, stdout=PIPE, stderr=PIPE)
+                        p_stdout, p_stderr = p.communicate()
+                        curr_branch_name = p_stdout.decode('utf-8').strip()
+                        if len(curr_branch_name) > 0:
+                            dollar_g_expanded = f'>{color.Fore.YELLOW}{curr_branch_name}{color.Fore.DEFAULT}> '
+                        else:
+                            dollar_g_expanded = '> '
+
+                        expanded_prompt = expanded_prompt.replace('$G', color.Fore.DEFAULT + dollar_g_expanded)
+                        state.prompt = expanded_prompt
+
                     # Output command prompt prefix
                     stdout.write(u'\r' + color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.prompt +
                               state.prompt +
