@@ -302,14 +302,27 @@ def main():
                         expanded_prompt = os.environ['PROMPT']
                         if expanded_prompt != '$P$G':
                             expanded_prompt =  color.Fore.GREEN + expanded_prompt
-                        expanded_prompt = expanded_prompt.replace('$P', color.Fore.DEFAULT + os.environ['CD'])
 
-                        # run git branch command
-                        from subprocess import Popen, PIPE
+                        curr_dir_to_check = os.environ['CD']
+                        expanded_prompt = expanded_prompt.replace('$P', color.Fore.DEFAULT + curr_dir_to_check)
 
-                        p = Popen('git branch --show-current', shell=True, stdout=PIPE, stderr=PIPE)
-                        p_stdout, p_stderr = p.communicate()
-                        curr_branch_name = p_stdout.decode('utf-8').strip()
+                        is_git_repo = False
+                        while curr_dir_to_check[-1] != '\\':
+                            git_path = os.path.join(curr_dir_to_check, '.git')
+                            if os.path.exists(git_path):
+                                is_git_repo = True
+                                break
+                            curr_dir_to_check = os.path.dirname(curr_dir_to_check)
+
+                        if is_git_repo:
+                            # run git branch command
+                            from subprocess import Popen, PIPE
+
+                            p = Popen('git branch --show-current', shell=True, stdout=PIPE, stderr=PIPE)
+                            p_stdout, p_stderr = p.communicate()
+                            curr_branch_name = p_stdout.decode('utf-8').strip()
+                        else:
+                            curr_branch_name = ''
                         if len(curr_branch_name) > 0:
                             dollar_g_expanded = f'>{color.Fore.YELLOW}{curr_branch_name}{color.Fore.DEFAULT}> '
                         else:
