@@ -37,6 +37,7 @@ resultMapFilePath = None
 create_result_map = True
 cmdLineFilePath = None
 max_cmd_history_lines = 10000
+git_prompt_cd = ''
 
 char2int = {'0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9}
 
@@ -192,7 +193,6 @@ def main():
     edit_cmd_line = False
     interactiveCon = None
 
-    git_prompt_cd = ''
     git_prompt_str = ''
     last_prompt_env_var = ''
 
@@ -302,6 +302,7 @@ def main():
                               hint_folder_after +
                               color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.text)
                 else :
+                    global git_prompt_cd
                     curr_dir_to_check = os.environ['CD']
                     if 'PROMPT' in os.environ and (os.environ['PROMPT'] != last_prompt_env_var or git_prompt_cd != curr_dir_to_check):
                         # refresh git_prompt info
@@ -1132,6 +1133,8 @@ def internal_exit(message = ''):
 
 def run_command(tokens):
     """Execute a command line (treat internal and external appropriately"""
+    global git_prompt_cd
+    git_prompt_cd = ''
     if tokens[0] == 'exit':
         internal_exit('Bye!')
     elif tokens[0].lower() == 'cd' and [t for t in tokens if t in sep_tokens] == []:
