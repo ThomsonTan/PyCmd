@@ -192,6 +192,9 @@ def main():
     edit_cmd_line = False
     interactiveCon = None
 
+    git_prompt_cd = ''
+    git_prompt_str = ''
+
     # Main loop
     while True:
         # Prepare buffer for reading one line
@@ -306,30 +309,22 @@ def main():
                         curr_dir_to_check = os.environ['CD']
                         expanded_prompt = expanded_prompt.replace('$P', color.Fore.DEFAULT + curr_dir_to_check)
 
-                        is_git_repo = False
-                        while curr_dir_to_check[-1] != '\\':
-                            git_path = os.path.join(curr_dir_to_check, '.git')
-                            if os.path.exists(git_path):
-                                is_git_repo = True
-                                break
-                            curr_dir_to_check = os.path.dirname(curr_dir_to_check)
-
-                        if is_git_repo:
-                            # run git branch command
+                        if git_prompt_cd != curr_dir_to_check:
+                            # refresh git_prompt info
                             from subprocess import Popen, PIPE
 
                             p = Popen('git branch --show-current', shell=True, stdout=PIPE, stderr=PIPE)
                             p_stdout, p_stderr = p.communicate()
                             curr_branch_name = p_stdout.decode('utf-8').strip()
-                        else:
-                            curr_branch_name = ''
-                        if len(curr_branch_name) > 0:
-                            dollar_g_expanded = f'>{color.Fore.YELLOW}{curr_branch_name}{color.Fore.DEFAULT}> '
-                        else:
-                            dollar_g_expanded = '> '
+                            if len(curr_branch_name) > 0:
+                                dollar_g_expanded = f'>{color.Fore.YELLOW}{curr_branch_name}{color.Fore.DEFAULT}> '
+                            else:
+                                dollar_g_expanded = '> '
 
-                        expanded_prompt = expanded_prompt.replace('$G', color.Fore.DEFAULT + dollar_g_expanded)
-                        state.prompt = expanded_prompt
+                            expanded_prompt = expanded_prompt.replace('$G', color.Fore.DEFAULT + dollar_g_expanded)
+                            git_prompt_cd = curr_dir_to_check
+                            git_prompt_str = expanded_prompt
+                    state.prompt = git_prompt_str
 
                     # Output command prompt prefix
                     stdout.write(u'\r' + color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.prompt +
