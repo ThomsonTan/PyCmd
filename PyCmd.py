@@ -194,6 +194,7 @@ def main():
 
     git_prompt_cd = ''
     git_prompt_str = ''
+    last_prompt_env_var = ''
 
     # Main loop
     while True:
@@ -301,29 +302,30 @@ def main():
                               hint_folder_after +
                               color.Fore.DEFAULT + color.Back.DEFAULT + appearance.colors.text)
                 else :
-                    if 'PROMPT' in os.environ:
+                    curr_dir_to_check = os.environ['CD']
+                    if 'PROMPT' in os.environ and (os.environ['PROMPT'] != last_prompt_env_var or git_prompt_cd != curr_dir_to_check):
+                        # refresh git_prompt info
                         expanded_prompt = os.environ['PROMPT']
                         if expanded_prompt != '$P$G':
                             expanded_prompt =  color.Fore.GREEN + expanded_prompt
 
-                        curr_dir_to_check = os.environ['CD']
                         expanded_prompt = expanded_prompt.replace('$P', color.Fore.DEFAULT + curr_dir_to_check)
 
-                        if git_prompt_cd != curr_dir_to_check:
-                            # refresh git_prompt info
-                            from subprocess import Popen, PIPE
+                        from subprocess import Popen, PIPE
 
-                            p = Popen('git branch --show-current', shell=True, stdout=PIPE, stderr=PIPE)
-                            p_stdout, p_stderr = p.communicate()
-                            curr_branch_name = p_stdout.decode('utf-8').strip()
-                            if len(curr_branch_name) > 0:
-                                dollar_g_expanded = f'>{color.Fore.YELLOW}{curr_branch_name}{color.Fore.DEFAULT}> '
-                            else:
-                                dollar_g_expanded = '> '
+                        p = Popen('git branch --show-current', shell=True, stdout=PIPE, stderr=PIPE)
+                        p_stdout, p_stderr = p.communicate()
+                        curr_branch_name = p_stdout.decode('utf-8').strip()
+                        if len(curr_branch_name) > 0:
+                            dollar_g_expanded = f'>{color.Fore.YELLOW}{curr_branch_name}{color.Fore.DEFAULT}> '
+                        else:
+                            dollar_g_expanded = '> '
 
-                            expanded_prompt = expanded_prompt.replace('$G', color.Fore.DEFAULT + dollar_g_expanded)
-                            git_prompt_cd = curr_dir_to_check
-                            git_prompt_str = expanded_prompt
+                        expanded_prompt = expanded_prompt.replace('$G', color.Fore.DEFAULT + dollar_g_expanded)
+                        git_prompt_cd = curr_dir_to_check
+                        git_prompt_str = expanded_prompt
+                        last_prompt_env_var = os.environ['PROMPT']
+
                     state.prompt = git_prompt_str
 
                     # Output command prompt prefix
