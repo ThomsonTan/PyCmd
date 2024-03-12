@@ -314,9 +314,18 @@ def main():
 
                         from subprocess import Popen, PIPE
 
-                        p = Popen('git branch --show-current', shell=True, stdout=PIPE, stderr=PIPE)
+                        p = Popen('git branch', shell=True, stdout=PIPE, stderr=PIPE)
                         p_stdout, p_stderr = p.communicate()
-                        curr_branch_name = p_stdout.decode('utf-8').strip()
+
+                        git_branch_line = p_stdout.decode('utf-8').strip().split('\n')
+
+                        for line in git_branch_line:
+                            if line.startswith('*'):
+                                curr_branch_name = line[2:]
+                                break
+                        else:
+                            curr_branch_name = ''
+
                         if len(curr_branch_name) > 0:
                             dollar_g_expanded = f'>{color.Fore.YELLOW}{curr_branch_name}{color.Fore.DEFAULT}> '
                         else:
