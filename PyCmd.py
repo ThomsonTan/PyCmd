@@ -856,7 +856,7 @@ def main():
             no_new_prompt = True
         elif tokens == [] or tokens[0] == '':
             continue
-        elif len(tokens) == 1 and tokens[0] == u'i':
+        elif len(tokens) == 1 and tokens[0] == u'ii':
             print("")
             try:
                 color_label = 'Linux'
