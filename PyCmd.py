@@ -504,7 +504,8 @@ def main():
                     state.handle(ActionCode.ACTION_OPEN_CLIPBOARD)
                 elif rec.VirtualKeyCode == 70:          # Alt-F
                     state.handle(ActionCode.ACTION_DELETE_WORD)
-                elif rec.VirtualKeyCode == 71:          # Alt-G
+                # elif rec.VirtualKeyCode == 71:          # Alt-G
+                elif rec.VirtualKeyCode == 90:          # Alt-Z
                     edit_cmd_line = True
                     state.history.reset()
                     break
@@ -537,9 +538,9 @@ def main():
                     state.handle(ActionCode.ACTION_COPY)
                     state.reset_selection()
                     auto_select = False
-                elif rec.VirtualKeyCode == 90:          # Alt-V
-                    state.handle(ActionCode.ACTION_PASTE)
-                    auto_select = False
+                # elif rec.VirtualKeyCode == 90:          # Alt-Z
+                #     state.handle(ActionCode.ACTION_PASTE)
+                #     auto_select = False
                 elif rec.VirtualKeyCode == 46:          # Alt-Delete
                     state.handle(ActionCode.ACTION_DELETE_WORD)
                 elif rec.VirtualKeyCode == 8:           # Alt-Backspace
