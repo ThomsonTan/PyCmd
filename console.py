@@ -261,8 +261,8 @@ def remove_escape_sequences(s):
     """
     from pycmd_public import color
     escape_sequences_fore = [v for (k, v) in list(color.Fore.__dict__.items()) + list(color.Back.__dict__.items())
-                             if not k in ['__dict__', '__doc__', '__weakref__', '__module__']]
-    return functools.reduce(lambda x, y: x.replace(y, ''), 
+                             if not k in ['__dict__', '__doc__', '__weakref__', '__module__', '__firstlineno__', '__static_attributes__']]
+    return functools.reduce(lambda x, y: x.replace(str(y), ''), 
                        escape_sequences_fore,
                        s)
 
