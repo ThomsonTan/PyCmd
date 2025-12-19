@@ -1,4 +1,4 @@
-import sys, os, tempfile, signal, time, traceback, codecs
+import sys, os, tempfile, signal, time, traceback
 
 import code
 import ctypes
@@ -1301,9 +1301,8 @@ def save_history(lines, filename, length):
     """
     if os.path.isfile(filename):
         # Read previously saved history and merge with current
-        history_file = codecs.open(filename, 'r', 'utf8', 'replace')
-        history_to_save = [line.rstrip(u'\n') for line in history_file.readlines()]
-        history_file.close()
+        with open(filename, 'r', encoding='utf-8', errors='replace') as history_file:
+            history_to_save = [line.rstrip(u'\n') for line in history_file.readlines()]
         # For performance and correctness of merging history from multiple instances,
         # only save the last command, this is good because save_history is called after
         # each command
@@ -1329,9 +1328,8 @@ def save_history(lines, filename, length):
         history_to_save = history_to_save[-length :]    # Limit history file
 
     # Write merged history to history file
-    history_file = codecs.open(filename, 'w', 'utf8')
-    history_file.writelines([line + u'\n' for line in history_to_save])
-    history_file.close()
+    with open(filename, 'w', encoding='utf-8', newline='\n') as history_file:
+        history_file.writelines([line + u'\n' for line in history_to_save])
 
 
 def read_history(filename):
@@ -1339,9 +1337,8 @@ def read_history(filename):
     Read and return a list of lines from a history file
     """
     if os.path.isfile(filename):
-        history_file = codecs.open(filename, 'r', 'utf8', 'replace')
-        history = [remove_tail_datetime(line.rstrip(u'\n\r')) for line in history_file.readlines()]
-        history_file.close()
+        with open(filename, 'r', encoding='utf-8', errors='replace') as history_file:
+            history = [remove_tail_datetime(line.rstrip(u'\n\r')) for line in history_file.readlines()]
     else:
         print('Warning: Can\'t open ' + os.path.basename(filename) + '!')
         history = []
